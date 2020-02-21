@@ -318,18 +318,15 @@ function dynamic_selector {
 			# communication latency using ping
 
 			echo "Measuring Communication latency:"
-			communication_latency1=$(ping -c 1 $edgeaddress1)
-			communication_latency2=$(ping -c 1 $edgeaddress2)
-			communication_latency3=$(ping -c 1 $edgeaddress3)
+			#communication_latency1=$(ping -c 1 $edgeaddress1)
+			#extract avg time in ping
+			communication_latency1=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+			communication_latency2=$(ping -c 1 $edgeaddress2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+			communication_latency3=$(ping -c 1 $edgeaddress3 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 
-			echo $communication_latency1
-			echo -e
-			echo $communication_latency2
-			echo -e
-			echo $communication_latency3
-
-			echo -e
-			echo "Done! Read communication latency"
+			echo Communciation Latency to $edgeaddress1 is $communication_latency1 ms
+			echo Communciation Latency to $edgeaddress2 is $communication_latency2 ms
+			echo Communciation Latency to $edgeaddress3 is $communication_latency3 ms
 			echo -e
 
 			##########################################################################
