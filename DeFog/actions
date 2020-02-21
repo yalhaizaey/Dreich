@@ -18,12 +18,12 @@
 # run simple benchmarks for the current platform to generate CPU, network and IO statistics
 function simple_benchmark {
 
-    today=$(date +"%m/%d/%Y")
+  today=$(date +"%m/%d/%Y")
 	echo -e "Starting Simple benchmarks..."
 
 	simple_CPU_benchmark
 
-    simple_IO_benchmark
+  simple_IO_benchmark
 
 	simple_network_benchmark
 
@@ -31,6 +31,7 @@ function simple_benchmark {
 
 }
 
+#########################################################################################################################
 # format and output system benchmark information using cat to display on screen to the user
 function display_info {
 cat <<INFO
@@ -49,19 +50,20 @@ cat <<INFO
 INFO
 }
 
+#########################################################################################################################
 # Run DeFog system CPU system benchmarks
 function simple_CPU_benchmark {
 	local zippedFile=zipFile
 
 	# Use awk to determine the CPU model name, system up time, cpu frequency and number of cores (using /proc/ and system stats
     cpuNume=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
-	sysUptime=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
+	  sysUptime=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
     cpuFrequency=$( awk -F: ' /cpu MHz/ {cpuFrequency=$2} END {print cpuFrequency}' /proc/cpuinfo )
     cpuCores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
 
 	# use dd command line utilities to create an asset file I/O test
 	echo  "Benching System CPU..."
-    dd if=/dev/urandom of=$zippedFile bs=1024 count=20000 >>/dev/null 2>&1
+  dd if=/dev/urandom of=$zippedFile bs=1024 count=20000 >>/dev/null 2>&1
 	echo -e "Unzipping small weights file ..."
 
 	# unzip a large weights file and record the time taken to unzip
@@ -73,6 +75,7 @@ function simple_CPU_benchmark {
 
 }
 
+#########################################################################################################################
 # Invoke the IO system benchmarks and echo update statements
 function simple_IO_benchmark {
     local benchmarkFile=benchmarker__$$
@@ -82,6 +85,7 @@ function simple_IO_benchmark {
     echo -e DONE  running IO benchmarks
 }
 
+#########################################################################################################################
 # Invoke the network benchmark benchmark function and echo status statements
 function simple_network_benchmark {
 	echo -e "Benching network download speed, downloading large weights file... "
@@ -89,6 +93,7 @@ function simple_network_benchmark {
     echo -e DONE network benchmark
 }
 
+#########################################################################################################################
 # Network benchmark - Use wget, date and AWK to leverage command line utilities to capture network metrics. Output to file using tee
 function _downloadTest {
 
@@ -106,12 +111,14 @@ function _downloadTest {
 	echo -e Network test: completed in $runtime secs | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # Network benchmarking utlity function to invoke the download test function and passing a weights file as parameter
 function download_benchmark {
     echo -e "Downloading file(s) from $1 ... "
     _downloadTest "$2"
 }
 
+#########################################################################################################################
 # Network benchmarking utility function to set a weights parameter
 function downloads_benchmark {
     echo -e "Downloading weights files ... "
@@ -124,6 +131,7 @@ function downloads_benchmark {
 
 }
 
+#########################################################################################################################
 # I/O benchmark test to create a large asset file using dd and commandline utilities
 function instantiate_file {
     echo -e Creating file ...
@@ -138,6 +146,7 @@ function instantiate_file {
 	remove_file
 }
 
+#########################################################################################################################
 # benchmark utility function to remove the large asset file I/O test
 function remove_file {
 	echo -e Removing file ...
@@ -150,6 +159,7 @@ function remove_file {
 	echo  Removing large file speed: completed in $runtime secs | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # install unixbench if not already installed using wget and tar to unzip
 function install_unixbench {
     test -d UnixBench && return
@@ -161,12 +171,14 @@ function install_unixbench {
 	tar xvfz $file_ver.tgz
 }
 
+#########################################################################################################################
 # install sysbench if not currently present
 function install_sysbench {
     test -d sysbench && return
-	sudo apt-get install sysbench
+	  sudo apt-get install sysbench
 }
 
+#########################################################################################################################
 # Run TPI Unixbench platform tests and output to file using tee
 function benchmark_unixbench {
     install_unixbench
@@ -176,6 +188,7 @@ function benchmark_unixbench {
     popd > /dev/null | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # Run TPI Sysbench platform tests and output to file using tee
 function benchmark_sysbench {
     echo -e Installing sysbench...
@@ -186,6 +199,7 @@ function benchmark_sysbench {
 	sysbench --test=cpu --cpu-max-prime=20000 run | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # stop and remove all docker images and containers
 function remove_docker_images_and_containers {
 	docker stop $(docker ps -aq)
@@ -193,12 +207,14 @@ function remove_docker_images_and_containers {
 	docker rmi $(docker images -q)
 }
 
+#########################################################################################################################
 # stop and remove all docker containers
 function remove_docker_containers {
 	docker stop $(docker ps -aq)
 	docker rm $(docker ps -aq)
 }
 
+#########################################################################################################################
 # utility clean function to remove all defog asset, config, results and application folders, files and containers
 function delete_utility {
     echo Deleting cleanup files ...
@@ -225,6 +241,7 @@ function delete_utility {
 	echo OK
 }
 
+#########################################################################################################################
 # function to build a docker application, the build path, name and application name are passed in as parameters, this will always attempt to build the application
 # regardless if the directory already exists
 function build_docker_app_always {
@@ -261,6 +278,8 @@ function build_docker_app_always {
 
 }
 
+
+#########################################################################################################################
 # function to build a docker application, the build path, name and application name are passed in as parameters
 function build_docker_app {
 
@@ -304,11 +323,13 @@ function build_docker_app {
 
 }
 
+#########################################################################################################################
 # Output a sepeartor line to format results file and terminal, uses the tee package and appends to the results file
 function seperator {
 	echo -e "*****************************************************************************" | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # Utility system actions and application build function for the Cloud-Edge pipeline, this function is invoked for the Cloud instance
 function benchcloudinstance {
 
@@ -326,6 +347,7 @@ function benchcloudinstance {
 
 }
 
+#########################################################################################################################
 # Utility system actions and application build function for the Cloud-Edge pipeline, this function is invoked for the Edge instance
 function benchedgeinstance {
 
@@ -340,6 +362,7 @@ function benchedgeinstance {
 
 }
 
+#########################################################################################################################
 # Utility system actions and application build function for the Cloud and Edge Only pipelines
 function bench {
 
@@ -368,6 +391,7 @@ function bench {
 
 }
 
+#########################################################################################################################
 # utility function to destruct and construct the defog directory architecture on the Cloud or Edge.
 function run_setup {
 
@@ -386,6 +410,7 @@ function run_setup {
 	echo -e
 }
 
+#########################################################################################################################
 # actions.sh main, test for the current pipeline and invoke the relevant functions. Move the results files to the results folder
 function main {
 	run_setup
@@ -395,23 +420,24 @@ function main {
 
 	# run actions on the corresponding pipeline utility function
 	test $run_cloud && bench
-    test $run_edge && bench
+  test $run_edge && bench
 	test $run_both_cloud && benchcloudinstance
-    test $run_both_edge && benchedgeinstance
+  test $run_both_edge && benchedgeinstance
 
 	# move the results file to the results folder
 	mv $filename.txt results/results.txt
 }
 
+#########################################################################################################################
 # accept user input passed by defog.sh script
 while getopts :cebz:adfsxluhngs:yijpmk opt; do
     case "$opt" in
-        a)
-            run_downloads=true
-		    run_unixbench=true
+    a)
+      run_downloads=true
+		  run_unixbench=true
 			run_sysbench=true
 			run_simple=true
-            ;;
+      ;;
 		c)
 			run_cloud=true
 			;;
@@ -421,24 +447,24 @@ while getopts :cebz:adfsxluhngs:yijpmk opt; do
 		e)
 			run_edge=true
 			;;
-        d)
-            run_downloads=true
-            ;;
-        f)
-            run_lfile=true
-            ;;
+    d)
+      run_downloads=true
+      ;;
+    f)
+      run_lfile=true
+      ;;
 		s)
 			run_sysbench=true
 			;;
-        x)
-            run_delete=true
-            ;;
+    x)
+      run_delete=true
+      ;;
 		v)
 			run_remove_containers=true
 			;;
 		u)
-            run_unixbench=true
-            ;;
+      run_unixbench=true
+      ;;
 		g)
 			run_simple=true
 			;;
@@ -465,8 +491,8 @@ while getopts :cebz:adfsxluhngs:yijpmk opt; do
 			run_psphinx=true
 			;;
 		y)
-            run_yolo=true
-            ;;
+      run_yolo=true
+      ;;
 		m)
 			;;
     esac

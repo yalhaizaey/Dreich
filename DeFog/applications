@@ -21,12 +21,14 @@ function remove_docker_images_and_containers {
 	docker rmi $(docker images -q)
 }
 
+#########################################################################################################################
 # remove docker containers
 function remove_docker_containers {
 	docker stop $(docker ps -aq)
 	docker rm $(docker ps -aq)
 }
 
+#########################################################################################################################
 # run and enter ipokemon container on cloud only or edge only platform
 function run_docker_ipokemon {
 	echo -n Running ipokemon docker container...
@@ -35,33 +37,37 @@ function run_docker_ipokemon {
 	echo -n DONE entering iPokeMon docker container
 }
 
+###################################################################################################################
 # run an application container, passing the path, application name, run script (run.sh or runEdge.sh), the application ID and the platform ID as parameters
 function run_docker_app {
 
-	# evaluate parameters
-	eval path="$1"
-	eval applicationname="$2"
-	eval runscript="$3"
-	eval currentapp="$4"
-	eval currentplatform="$5"
+	# evaluate parameters #for example: "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0"
+	eval path="$1"                       #"yolobuild/YOLO/docker"
+	eval applicationname="$2"            #"YOLO"
+	eval runscript="$3"                  #"runedge.sh"
+	eval currentapp="$4"                 #"0"
+	eval currentplatform="$5"            #"0"
 
 	# navigate to the specified path
-	cd ${path}
+	cd ${path}                           #cd /home/pi/defog/yolobuild/YOLO/docker
 
 	echo -n -e Running ${applicationname} container...
 	echo -e #added by Yousef
 	# invoke the specified run script for a fog application on the Cloud or Edge
 	. ${runscript} ${currentapp} ${currentplatform}
 
+  echo -e
 	echo -n -e DONE running ${applicationname}
 	echo -e
 }
 
+#########################################################################################################################
 # utility function to print sepeartor/formatter line. This is used to format the result file and terminal output.
 function seperator {
 echo -e "*****************************************************************************" | tee -a $filename.txt
 }
 
+#########################################################################################################################
 # run the application script on the cloud for the cloud/edge pipeline
 function bothcloudbench {
 	# output to the terminal and results file using tee
@@ -76,6 +82,7 @@ function bothcloudbench {
 
 }
 
+#########################################################################################################################
 # run the application script on the edge for the cloud/edge pipeline
 function bothedgebench {
 	# output to the terminal and results file using tee
@@ -90,10 +97,11 @@ function bothedgebench {
 
 }
 
+#########################################################################################################################
 # run the application script on the edge for the edge only pipeline
 function edgebench {
 	# output to the terminal and results file using tee
-	echo -e "Edge applications benchmarks: " | tee $filename.txt
+	echo -e "Edge applications benchmarks:" | tee $filename.txt
 	seperator
 
 	# $ test is used to determine if the user value has been provided to invoke a specic fog application
@@ -107,6 +115,7 @@ function edgebench {
 
 }
 
+#########################################################################################################################
 # run the application script on the cloud for the cloud only pipeline
 function cloudbench {
 	# output to the terminal and results file using tee
@@ -124,11 +133,14 @@ function cloudbench {
 
 }
 
+###############################################################################################################
 # applications main function (This script is executed on the Cloud or Edge)
 function main {
 	# navigate to the main defog folder on the Cloud or Edge
 	cd defog
 
+	echo "The processing now is running from the cloud/edge devices!!"
+	echo "Navigate to /home/pi/defog/yolobuild/YOLO/docker"
 	# update config folder privileges to prevent accidental mutation or deletion
 	chmod 400 configs
 	echo -e
@@ -136,16 +148,18 @@ function main {
 	# environment/pipeline user input is provided by the sourced defog.sh and defogExecute.sh scripts. This is tested to determine what bench function to invoke for the current pipeline
     test $run_cloud && cloudbench
     test $run_edge && edgebench
-	test $run_both_cloud && bothcloudbench
+	  test $run_both_cloud && bothcloudbench
     test $run_both_edge && bothedgebench
 }
+
+###############################################################################################################
 
 # accept user input passed by defog bash script
 while getopts :cebz:adfsxulhngs:yipjmk opt; do
     case "$opt" in
-        a)
-            run_downloads=true
-		    run_unixbench=true
+    a)
+      run_downloads=true
+		  run_unixbench=true
 			run_sysbench=true
 			run_simple=true
             ;;
@@ -158,22 +172,21 @@ while getopts :cebz:adfsxulhngs:yipjmk opt; do
 		e)
 			run_edge=true
 			;;
-        d)
-            run_downloads=true
-            ;;
-        f)
-
-            ;;
+    d)
+      run_downloads=true
+      ;;
+    f)
+      ;;
 		s)
 			run_sysbench=true
 			;;
-        x)
-            run_delete=true
+    x)
+      run_delete=true
 			remove_docker_containers
-            ;;
+      ;;
 		u)
-            run_unixbench=true
-            ;;
+      run_unixbench=true
+      ;;
 		g)
 			run_simple=true
 			;;
@@ -199,14 +212,14 @@ while getopts :cebz:adfsxulhngs:yipjmk opt; do
 			run_psphinx=true
 			;;
 		y)
-            run_yolo=true
-            ;;
+      run_yolo=true
+      ;;
 		m)
 			;;
-        ?)
-            HELP
-            exit 2
-            ;;
+    ?)
+      HELP
+      exit 2
+      ;;
     esac
 done
 

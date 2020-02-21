@@ -15,11 +15,12 @@
 #
 #########################################################################################################################
 
-
 # function to invoke Help and FAQ command line output
 function executebenchmarkhelp {
 		./defogexecute -?
 }
+
+#########################################################################################################################
 
 # function to invoke the actions script on the cloud-edge pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters.
@@ -38,6 +39,8 @@ function benchmark_both_actions {
 		echo -e "DONE - edge ssh session"
 		echo -e
 }
+
+#########################################################################################################################
 
 # function to invoke the application bash file on the cloud-edge pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters. The results are then transferred back from the edge as necessary.
@@ -86,6 +89,8 @@ function benchmark_both_applications {
 		echo "" | tee -a $verbose_filename.txt
 }
 
+#########################################################################################################################
+
 # function to invoke the actions script on the edge only pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters.
 function benchmark_edge_actions {
@@ -106,6 +111,8 @@ function benchmark_edge_actions {
 		echo "" | tee -a $verbose_filename.txt
 
 }
+
+#########################################################################################################################
 
 # function to invoke the application bash file on the edge only pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters. The results are then transferred back from the edge as necessary.
@@ -142,6 +149,8 @@ function benchmark_edge_applications {
 
 }
 
+#########################################################################################################################
+
 # function to invoke the actions script on the cloud only pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters.
 function benchmark_cloud_actions {
@@ -162,6 +171,8 @@ function benchmark_cloud_actions {
 		echo "" | tee -a $verbose_filename.txt
 
 }
+
+#########################################################################################################################
 
 # function to invoke the application bash file on the cloud only pipeline by sshing into both the cloud and edge and calling the actions bash script
 # passing the relevant variables as file parameters. The results are then transferred back from the edge as necessary.
@@ -200,6 +211,8 @@ function benchmark_cloud_applications {
 
 }
 
+#########################################################################################################################
+
 # calculate the cost of running the benchmarks on the cloud, using AWS pricing strategy
 function calc_cloud_cost {
 
@@ -221,6 +234,8 @@ function calc_cloud_cost {
 
 }
 
+#########################################################################################################################
+
 # Estimage the cost of running the benchmarks on the edge using a cheaper AWS pricing strategy (50% of AWS cost)
 function calc_edge_cost {
 
@@ -240,6 +255,8 @@ function calc_edge_cost {
 	echo -e "Edge cost for application computation (estimated £0.008 per hour)": £$cost | tee -a $verbose_filename.txt
 
 }
+
+#########################################################################################################################
 
 # calculate the return trip time and communication latency metrics
 function calc_rtt {
@@ -269,6 +286,8 @@ function calc_rtt {
 
 }
 
+#########################################################################################################################
+
 # calculate real time factor for audio applications (computational time / length of audio file in seconds)
 function calc_rtf {
 	local computation=${newarr[1]}
@@ -279,6 +298,8 @@ function calc_rtf {
 
 	echo Real Time Factor: $rtf secs | tee -a $verbose_filename.txt
 }
+
+#########################################################################################################################
 
 # iterate over metrics returned from the edge or cloud, set them to local array
 function set_returned_application_metrics {
@@ -302,6 +323,8 @@ function set_returned_application_metrics {
 
 }
 
+#########################################################################################################################
+
 # utility function to update the current pipeline text based on the input sourced from the defog.sh script
 function set_pipeline {
 		# initialise to default value
@@ -314,6 +337,8 @@ function set_pipeline {
 		fi
 }
 
+#########################################################################################################################
+
 # invoke the relevant application benchmark utility function
 function benchmark_applications {
 
@@ -325,27 +350,32 @@ function benchmark_applications {
 			echo YOLO Benchmarks: | tee -a $verbose_filename.txt
 			seperator
 			benchmark_fog_app "arrPics" "./assets/yolo-assets/yoloimage.jpg" "./assets/yolo-assets/*.jpg" "YOLO"
+
 		elif [ "$applications" == "-p" ];
 		then
 			echo Pocket Sphinx Benchmarks: | tee -a $verbose_filename.txt
 			seperator
 			benchmark_fog_app "arrWavs" "./assets/psphinx-assets/psphinx.wav" "./assets/psphinx-assets/*.wav" "PocketSphinx"
+
 		elif [ "$applications" == "-j" ];
 		then
 			echo Aeneas Benchmarks: | tee -a $verbose_filename.txt
 			seperator
 			benchmark_aeneas
+
 		elif [ "$applications" == "-i" ];
 		then
 			echo iPokeMon Benchmarks: | tee -a $verbose_filename.txt
 			seperator
 			start_ipokemon_server
 			benchmark_ipokemon
+
 		elif [ "$applications" == "-k" ];
 		then
 			echo iPokeMon Benchmarks: | tee -a $verbose_filename.txt
 			seperator
 			benchmark_ipokemon
+
 		elif [ "$applications" == "-l" ];
 		then
 			echo FogLAMP Benchmarks: | tee -a $verbose_filename.txt
@@ -353,6 +383,8 @@ function benchmark_applications {
 			benchmark_fog_app "arrCurlCommands" "./assets/foglamp-assets/foglampcurlcommand.sh" "./assets/foglamp-assets/*.sh" "FogLAMP"
 		fi
 }
+
+#########################################################################################################################
 
 # benchmark iPokemon server using a jmx file to simulate user behaviour
 function benchmark_ipokemon {
@@ -387,6 +419,8 @@ function benchmark_ipokemon {
 	cd ../../
 }
 
+#########################################################################################################################
+
 # setup and start the iPokeMon server
 function start_ipokemon_server {
 		# determine the platform/pipeline secure shell tunnel (ssh) into, and enter the iPokeMon docker container (use ctrl p & ctrl q to detach the container)
@@ -399,6 +433,8 @@ function start_ipokemon_server {
 			ssh $edgeuser@$edgeaddress -t "cd defog/ipokemonbuild/iPokeMon/docker && sudo -sH && . enter.sh; bash"
 		fi
 }
+
+#########################################################################################################################
 
 # determine the pipeline/platform to benchmark the applications on, invoke the calculation of real time trip and real time factor variables
 function benchmark_application {
@@ -438,6 +474,8 @@ function benchmark_application {
 		echo -e ${metricsValues[@]} | tee -a $metrics_verbose_filename.txt
 }
 
+#########################################################################################################################
+
 # benchmark fog application - accepts asset array name, asset name, asset path and application name as parameters.
 function benchmark_fog_app {
 
@@ -461,6 +499,7 @@ function benchmark_fog_app {
 		# Update the pipeline and application metric values
 		metricsValues[17]=$pipeline
 		metricsValues[18]=$application_name
+		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
 
 		# Output to the terminal and results file using tee
 		echo -e "" | tee -a $verbose_filename.txt
@@ -485,7 +524,8 @@ function benchmark_fog_app {
 	done
 }
 
-#
+#########################################################################################################################
+
 function benchmark_aeneas {
 
 	declare -a arrAudios
@@ -563,11 +603,15 @@ function benchmark_aeneas {
 
 }
 
+#########################################################################################################################
+
 # instantiate or reset metric labels and values to default values
 function create_metric_array {
 	declare -g metricsLabels=('T1' 'ET' 'T2' 'T3' 'RTT' 'RTF' 'Cost' 'BytesUp1' 'BytesDown1' 'BytesDown2' 'BytesPerSecUp1' 'BytesPerSecDown1' 'BytesPerSecDown2' 'T4' 'CL' 'FRTT' 'FCL' 'Pipeline' 'Application' 'Device')
 	declare -g metricsValues=('NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA')
 }
+
+#########################################################################################################################
 
 # secure copy/transfer data/assets to destination platform
 function scp_asset {
@@ -613,6 +657,8 @@ function scp_asset {
 
 }
 
+#########################################################################################################################
+
 # transfer the configuration file securely to the cloud or the edge using secure copy protocol. The destination platform is passed in as a paramater. Redirect the console output using 2>&1.
 function transfer_config {
 	# evaluate the destination platform id parameter
@@ -631,14 +677,20 @@ function transfer_config {
 	echo -e
 }
 
+#########################################################################################################################
+
 # utility function to print verbose sepeartor/formatter line to file using tee
 function seperator {
 	echo -e "*****************************************************************************" | tee -a $verbose_filename.txt
 }
 
+#########################################################################################################################
+
 # main functionality - invoke the create_metric_array function, output the metric labels to the result file. Determine the pipeline to run based on input sourced from the defog.sh script.
 # transfer the config file to the Edge r Cloud and run the action or application functions. Cat and command line utility tr -s is used to parse and format the results data to a csv output file.
 # The output files are then moved to the results folder
+
+
 function main {
 
 	# invoke the creation of the metric array

@@ -174,9 +174,9 @@ function edgeaddress_selector_modified {
 		while true; do
 			echo ""
 			echo -e "How would you like to select EDGE node device:"
-				echo "Randomly -    Enter 1"
+				echo "Randomly    - Enter 1"
 				echo "Dynamically - Enter 2"
-				echo "Manually -    Enter 3"
+				echo "Manually    - Enter 3"
 				echo ""
 		  read -p "Enter [1,2,3]: " ANS
 		  case $ANS in
@@ -198,6 +198,7 @@ function edgeaddress_selector_modified {
 
 ################################################################################
 #utlity function to offload the workload to a random node device
+#added by Yousef
 
 function random_selector {
 
@@ -296,6 +297,7 @@ function dynamic_selector {
 
 			echo ""
 
+		  ##########################################################################
       # remotely access edge nodes and read the current loadavarage
 			echo "Reading loadaverage of available edge nodes:"
 			cpu_usage1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/loadavg | awk '{print $1}')
@@ -312,6 +314,23 @@ function dynamic_selector {
 
 			echo ""
 
+			##########################################################################
+			# remotely access edge nodes and communication latency
+
+			echo "Reading Communication latency:"
+			communication_latency1=$(ping -c 3 $edgeaddress1)
+			communication_latency2=$(ping -c 3 $edgeaddress2)
+			communication_latency3=$(ping -c 3 $edgeaddress3)
+
+			echo $communication_latency1
+			echo $communication_latency2
+			echo $communication_latency3
+
+			echo -e
+			echo "Done! Read communication latency"
+			echo -e
+
+			##########################################################################
       # remotely access edge devices nodes and read the hardware specifications
 			echo "Reading CPU specifications of available edge nodes:"
 			cpu_info1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
@@ -327,7 +346,8 @@ function dynamic_selector {
 			#echo cpuinfo of 18.212.31.138 is $cpu_info4
 
 
-			#function to comapare the loadavarages and select the deivce that has the min loadavarage
+			##########################################################################
+			#comapare the loadavarages and select the deivce that has the min loadavarage
 			echo -e
 			declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3)
 			echo loadavarages of EDGE nodes =  ${nodes_loadavarages[*]}
@@ -336,15 +356,14 @@ function dynamic_selector {
 			max=${nodes_loadavarages[0]}
 			min=${nodes_loadavarages[0]}
 
-
 			for i in "${nodes_loadavarages[@]}";
 			do
 				(( $(echo "$i > $max" |bc -l) )) && max=$i
 				(( $(echo "$i < $min" |bc -l) )) && min=$i
 			done
 
-			echo max is $max
-			echo min is $min
+			echo maximum loadaverage is $max
+			echo minimum loadavarage is $min
 
 			#to find the index of device with maximum loadavarage
 			for i in "${!nodes_loadavarages[@]}"; do
@@ -362,7 +381,8 @@ function dynamic_selector {
 			   fi
 			done
 
-			#edge_device = the deivce with min loadavarage
+			##########################################################################
+			#edge_device = the deivce that has min loadavarage
 			edge_device=$edge_device2
 
 		  case $edge_device in
@@ -384,6 +404,8 @@ function dynamic_selector {
 		done
 	fi
 	echo ""
+	#echo device that has the maximum workload is $
+	#echo device that has the minimum workload is $edgeaddress
 	echo Workload will be offloaded to edge node $edgeaddress
 }
 
@@ -780,12 +802,12 @@ function display_help {
 }
 
 ################################################################################
+################################################################################
 # application main
 
 	create_result_files
 	#display_ascii_header
 	#display_help $1
-
 	env_user_input
 
 	if [ "$environment" == "-c" ]; # cloud only
@@ -798,7 +820,6 @@ function display_help {
 		# actions_user_input # deleted by Yousef
 		applications_user_input
 		setup_jmeter
-
 	fi
 
 	if [ "$environment" == "-e" ]; # edge only #some changes on edge environment by Yousef
