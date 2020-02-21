@@ -317,13 +317,15 @@ function dynamic_selector {
 			##########################################################################
 			# communication latency using ping
 
-			echo "Reading Communication latency:"
+			echo "Measuring Communication latency:"
 			communication_latency1=$(ping -c 3 $edgeaddress1)
 			communication_latency2=$(ping -c 3 $edgeaddress2)
 			communication_latency3=$(ping -c 3 $edgeaddress3)
 
 			echo $communication_latency1
+			echo -e
 			echo $communication_latency2
+			echo -e
 			echo $communication_latency3
 
 			echo -e
