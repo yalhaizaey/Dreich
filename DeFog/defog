@@ -315,7 +315,7 @@ function dynamic_selector {
 			echo ""
 
 			##########################################################################
-			# remotely access edge nodes and communication latency
+			# communication latency using ping
 
 			echo "Reading Communication latency:"
 			communication_latency1=$(ping -c 3 $edgeaddress1)
