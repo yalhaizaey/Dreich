@@ -1,0 +1,18 @@
+Edge Only Benchmarks: 
+*****************************************************************************
+
+Transfer edge action results to edge device: completed in .803048000 secs
+
+YOLO Benchmarks:
+*****************************************************************************
+
+YOLO Benchmark Run 1:
+
+Computation: completed in 75.011398675 secs
+Upload to S3 bucket: completed in 5.100862170 secs
+Total bytes transferred from the edge: 879776 bytes
+Transfer edge application results to edge device: completed in 1.206718000 secs
+Transfer rate from the edge: 729065.1171193269 bytes per second
+
+Round Trip Time: 77.164334675 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0001666903

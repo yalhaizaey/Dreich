@@ -323,10 +323,13 @@ function dynamic_selector {
 			communication_latency1=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 			communication_latency2=$(ping -c 1 $edgeaddress2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 			communication_latency3=$(ping -c 1 $edgeaddress3 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+			communication_latency4=$(ping -c 1 18.212.31.138 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+
 
 			echo Communciation Latency to $edgeaddress1 is $communication_latency1 ms
 			echo Communciation Latency to $edgeaddress2 is $communication_latency2 ms
 			echo Communciation Latency to $edgeaddress3 is $communication_latency3 ms
+			echo Communciation Latency to the Cloud-AWS is $communication_latency4 ms
 			echo -e
 
 			##########################################################################
