@@ -745,7 +745,7 @@ function create_result_files {
 	taurus_filename=taurus
 	filenumber=""
 
-	cd results
+	cd results-Yousef     #changed by Yousef.. no all results are stored in the same file.cvs file
 	if [[ -e $verbose_filename.txt ]] ; then
 		i=0
 		while [[ -e $verbose_filename-$i.txt ]] ; do
@@ -831,7 +831,7 @@ function display_help {
 		seperator
 		echo "" | tee -a $verbose_filename.txt
 
-    applications_user_input # choose application first # changed by Yousef
+    applications_user_input       # choose application first # changed by Yousef
 		edgeaddress_selector_modified #added by Yousef
 		#actions_user_input # deleted by Yousef
 		#applications_user_input # moved up

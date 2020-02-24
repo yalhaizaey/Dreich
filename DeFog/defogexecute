@@ -520,6 +520,7 @@ function benchmark_fog_app {
 
 		# increment counter
 		((count++))
+		echo number of asstes is $count
 
 	done
 }
