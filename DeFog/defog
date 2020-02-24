@@ -317,7 +317,7 @@ function dynamic_selector {
 			##########################################################################
 			# communication latency using ping
 
-			echo "Measuring Communication latency:"
+			echo "Measuring Communication Latency to Edge Nodes:"
 			#communication_latency1=$(ping -c 1 $edgeaddress1)
 			#extract avg time in ping
 			communication_latency1=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
