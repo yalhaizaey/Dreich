@@ -501,6 +501,11 @@ function benchmark_fog_app {
 		metricsValues[18]=$application_name
 		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
 
+		if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress;
+		elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;
+		#elif [ "$environment" == "-b" ];
+		fi
+
 		# Output to the terminal and results file using tee
 		echo -e "" | tee -a $verbose_filename.txt
 		echo $application_name Benchmark Run $count: | tee -a $verbose_filename.txt
@@ -520,7 +525,6 @@ function benchmark_fog_app {
 
 		# increment counter
 		((count++))
-		echo number of asstes is $count
 
 	done
 }
@@ -555,6 +559,7 @@ function benchmark_aeneas {
 
 		metricsValues[17]=$pipeline
 		metricsValues[18]="Aeneas"
+		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
 
 		echo -e "" | tee -a $verbose_filename.txt
 		echo Aeneas Benchmark Run $count: | tee -a $verbose_filename.txt
