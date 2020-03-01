@@ -80,55 +80,7 @@ test_duration=300
 ################################################################################
 # help function that displays commandline help to the user
 function HELP {
-	echo "  _    _      _           ";
-	echo " | |  | |    | |        _ ";
-	echo " | |__| | ___| |_ __   (_)";
-	echo " |  __  |/ _ \ | '_ \     ";
-	echo " | |  | |  __/ | |_) |  _ ";
-	echo " |_|  |_|\___|_| .__/  (_)";
-	echo "               | |        ";
-	echo "               |_|        ";
-
-
     cat <<HELP
-
-	HELP: DeFog: Demystifying Fog Systems Interaction via Container based benchmarking [OPTION...]
-	DeFog allows you to build and run applications depyloed on the Edge and Cloud through container based benchmarking,
-	please select the desired environment as well as the application or system to benchmark.
-
-	Run Defog using:
-	$ sh defog
-
-	Environments:
-	- Run Benchmarks on both Cloud and Edge
-	- Run Benchmarks on Cloud Only
-	- Run Benchmarks on Edge Only
-
-	Pre-Setup Edge Devices:
-	- Odroid XU4
-	- Raspberry Pi
-
-	Actions:
-	- Run all system benchmarks
-	- Runs small and large weight downloads test
-	- Test large file create/remove speed
-	- Run Sysbench
-	- Run UnixBench
-	- Delete temporary files
-	- Run Simple System Benchmarks
-	- No actions
-
-	Applications Benchmarks:
-	- Run Yolo
-	- Run Pocket Sphinx
-	- Run Aeneas
-	- Build and Run iPokeMon
-	- Run iPokeMon
-	- Run FogLAMP
-	- No Applications
-
-	FAQ:
-
 	Question 1: What is DeFog?
 
 	Answer 1: DeFog is a benchmarking method that builds and runs containerised fog
@@ -142,30 +94,13 @@ function HELP {
 	of hardware but are geographically closer to end user devices such as
 	laptops and smartphones than the Cloud.
 
-	Question 3: What applications can I benchmark?
-
-	Answer 3: Currently DeFog supports a range of applications with different workloads:
-	Deep learning object classification tool YOLO, speech to text generator
-	PocketSphinx, forced alignment tool Aeneas, IoT Edge gateway application
-	FogLAMP and GPS based VR based mobile online game iPokemon.
-
-	Question 4: How can I run DeFog?
-
-	Answer 4: You can run DeFog using bash: '$ sh defog' or '$ bash defog'
-	and following the on screen prompts.
-
-	Question 5: What is a DeFog pipeline?
-
-	Answer 5: A pipeline is the series of tasks performed by DeFog on the Edge, Cloud
-	or Both. The pipeline controls the flow of data and where the application
-	will be built, run and benchmarked.
-
 HELP
 }
 
 ################################################################################
 # utility function to determine the edge device address (i.e. ipaddress) NOT based on user input
 # BUT based on curret situation of the devices:
+
 # added by Yousef
 
 function edgeaddress_selector_modified {
@@ -288,7 +223,7 @@ function random_selector {
 
 ################################################################################
 #utlity function to remotely read loadaverages of edge nodes,
-#and forwared the workload to the device that has minimum loadaverage
+#and forwared the workload to a device that has the minimum loadaverage
 
 function dynamic_selector {
 	if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
@@ -299,7 +234,7 @@ function dynamic_selector {
 
 		  ##########################################################################
       # remotely access edge nodes and read the current loadavarage
-			echo "Reading loadaverage of available edge nodes:"
+			echo "Current loadaverage of the available edge nodes:"
 			cpu_usage1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/loadavg | awk '{print $1}')
 			echo loadavarage of $edgeaddress1 is $cpu_usage1
 
@@ -309,6 +244,12 @@ function dynamic_selector {
 			cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
 			echo loadavarage of $edgeaddress3 is $cpu_usage3
 
+      cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
+			echo loadavarage of $edgeaddress4 is $cpu_usage4
+
+			cpu_usage5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/loadavg | awk '{print $1}')
+			echo loadavarage of $clouduser is $cpu_usage5
+
 			#cpu_usage4=$(ssh -i "EC2.pem" ubuntu@18.212.31.138 cat /proc/loadavg | awk '{print $1}')
 			#echo loadavarage of 18.212.31.138 is $cpu_usage4
 
@@ -316,28 +257,35 @@ function dynamic_selector {
 
 			##########################################################################
 			# communication latency using ping
-
-			echo "Measuring Communication Latency to available Edge Nodes:"
+			echo "Communication Latency to the available Edge Nodes:"
 			#communication_latency1=$(ping -c 1 $edgeaddress1)
 			#extract avg time in ping
 			communication_latency1=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 			communication_latency2=$(ping -c 1 $edgeaddress2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 			communication_latency3=$(ping -c 1 $edgeaddress3 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
-			communication_latency4=$(ping -c 1 18.212.31.138 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+      communication_latency4=$(ping -c 1 $edgeaddress4 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+			communication_latency5=$(ping -c 1 $cloudaddress | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 
 
 			echo Communciation Latency to $edgeaddress1 is $communication_latency1 ms
 			echo Communciation Latency to $edgeaddress2 is $communication_latency2 ms
 			echo Communciation Latency to $edgeaddress3 is $communication_latency3 ms
-			echo Communciation Latency to the Cloud-AWS is $communication_latency4 ms
+      echo Communciation Latency to $edgeaddress4 is $communication_latency4 ms
+			echo Communciation Latency to the Cloud-AWS is $communication_latency5 ms
 			echo -e
 
 			# number of hope using tracetout:
-			echo "Measuring the number of hopes to the available Edge Nodes:"
+			#echo "Number of hops to the available Edge Nodes:"
 			traceroute $edgeaddress1
+			echo -e
 			traceroute $edgeaddress2
+			echo -e
 			traceroute $edgeaddress3
 			echo -e
+      traceroute $edgeaddress4
+			echo -e
+			#traceroute $cloudaddress
+			#echo -e
 			##########################################################################
       # remotely access edge devices nodes and read the hardware specifications
 			echo "Reading CPU specifications of available edge nodes:"
@@ -350,48 +298,49 @@ function dynamic_selector {
 			cpu_info3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
 			echo cpuinfo of $edgeaddress3 is $cpu_info3
 
-			#cpu_info4=$(ssh -i "EC2.pem" ubuntu@18.212.31.138 cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
-			#echo cpuinfo of 18.212.31.138 is $cpu_info4
+      cpu_info4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
+			echo cpuinfo of $edgeaddress4 is $cpu_info4
+
+			cpu_info5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
+			echo cpuinfo of $cloudaddress is $cpu_info5
 
 
 			##########################################################################
 			#comapare the loadavarages and select the deivce that has the min loadavarage
 			echo -e
-			declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3)
-			echo loadavarages of EDGE nodes =  ${nodes_loadavarages[*]}
+			declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
+			echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
 			echo -e
 
 			max=${nodes_loadavarages[0]}
 			min=${nodes_loadavarages[0]}
-
 			for i in "${nodes_loadavarages[@]}";
 			do
 				(( $(echo "$i > $max" |bc -l) )) && max=$i
 				(( $(echo "$i < $min" |bc -l) )) && min=$i
 			done
-
 			echo maximum loadaverage is $max
 			echo minimum loadavarage is $min
 
 			#to find the index of device with maximum loadavarage
 			for i in "${!nodes_loadavarages[@]}"; do
 			   if [[ "${nodes_loadavarages[$i]}" = "${max}" ]]; then
-			     edge_device1="${i}"
-			     echo index of maximum is $edge_device1;
+			     device1="${i}"
+			     echo index of maximum is $device1;
 			   fi
 			done
 
 			#To find the index of device with minimum loadavarage
 			for i in "${!nodes_loadavarages[@]}"; do
 			   if [[ "${nodes_loadavarages[$i]}" = "${min}" ]]; then
-			     edge_device2="${i}"
-			       echo index of minimum is $edge_device2;
+			     device2="${i}"
+			       echo index of minimum is $device2;
 			   fi
 			done
 
 			##########################################################################
 			#edge_device = the deivce that has min loadavarage
-			edge_device=$edge_device2
+			edge_device=$device2
 
 		  case $edge_device in
 			'0')
@@ -406,6 +355,11 @@ function dynamic_selector {
 				 edgeaddress=$edgeaddress3
 				 edgeuser=$edgeuser3
 				 break;;
+      '3')
+         edgeaddress=$edgeaddress4
+         edgeuser=$edgeuser4
+         break;;
+
 			*)
 			   echo "Wrong input, try again";;
 		  esac
@@ -428,8 +382,9 @@ function manual_selector {
 				echo "To choose Raspberry Pi 1, Enter 1"
 				echo "To choose Raspberry Pi 2, Enter 2"
 				echo "To choose Raspberry Pi 3, Enter 3"
+        echo "To choose Raspberry Pi 4, Enter 4"
 				echo ""
-		  read -p "What device would you like to run:[1,2,3] " ANS
+		  read -p "What device would you like to run:[1,2,3,4] " ANS
 		  case $ANS in
 			'1')
 			   edgeaddress=$edgeaddress1
@@ -443,6 +398,10 @@ function manual_selector {
 				 edgeaddress=$edgeaddress3
 				 edgeuser=$edgeuser3
 				 break;;
+      '4')
+   			edgeaddress=$edgeaddress4
+   			edgeuser=$edgeuser4
+   			break;;
 			*)
 			   echo "Wrong input, try again";;
 		  esac
@@ -502,6 +461,7 @@ done
 # utility function to determine the platform pipeline based on user input
 function env_user_input {
 while true; do
+	echo ""
 	echo "Environments:"
 		echo "0. Cloud Only"
 		echo "1. Edge Only"
@@ -528,6 +488,7 @@ done
 # utility function to determine the platform applications to be benchmarked based on user input
 function applications_user_input {
 while true; do
+	echo ""
 	echo -e "Fog Applications:"
 		echo "0. Yolo"
 		echo "1. PocketSphinx"
@@ -751,7 +712,7 @@ function create_result_files {
 	taurus_filename=taurus
 	filenumber=""
 
-	cd results-Yousef     #changed by Yousef.. no all results are stored in the same file.cvs file
+	cd results_Yousef    #changed by Yousef.. now all results are stored in the same file.cvs file
 	if [[ -e $verbose_filename.txt ]] ; then
 		i=0
 		while [[ -e $verbose_filename-$i.txt ]] ; do
@@ -816,7 +777,8 @@ function display_help {
 	create_result_files
 	#display_ascii_header
 	#display_help $1
-	env_user_input
+	applications_user_input   # choose application first then choose the deployment environment (Cloud / edge)
+  env_user_input
 
 	if [ "$environment" == "-c" ]; # cloud only
 	then
@@ -826,7 +788,7 @@ function display_help {
 		echo "" | tee -a $verbose_filename.txt
 
 		# actions_user_input # deleted by Yousef
-		applications_user_input
+		#applications_user_input
 		setup_jmeter
 	fi
 
@@ -837,8 +799,8 @@ function display_help {
 		seperator
 		echo "" | tee -a $verbose_filename.txt
 
-    applications_user_input       # choose application first # changed by Yousef
-		edgeaddress_selector_modified #added by Yousef
+    #applications_user_input       # choose application first # changed by Yousef
+		edgeaddress_selector_modified  #added by Yousef
 		#actions_user_input # deleted by Yousef
 		#applications_user_input # moved up
 

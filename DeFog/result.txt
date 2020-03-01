@@ -1,0 +1,402 @@
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in .876568000 secs
+
+YOLO Benchmarks:
+*****************************************************************************
+
+YOLO Benchmark Run 1:
+
+Computation: completed in 2.162921103 secs
+Upload to S3 bucket: completed in 1.668394490 secs
+Total bytes transferred from the cloud: 879284 bytes
+Transfer cloud application results to edge device: completed in 1.392236000 secs
+Transfer rate from the cloud: 631562.4649843848 bytes per second
+
+Round Trip Time: 4.992917103 secs
+Cloud cost for application computation (£0.016 per hour): £.0000096128
+
+YOLO Benchmark Run 2:
+
+Computation: completed in 1.678981914 secs
+Upload to S3 bucket: completed in 1.453870085 secs
+Total bytes transferred from the cloud: 851824 bytes
+Transfer cloud application results to edge device: completed in 1.239874000 secs
+Transfer rate from the cloud: 687024.6492788783 bytes per second
+
+Round Trip Time: 4.046212914 secs
+Cloud cost for application computation (£0.016 per hour): £.0000074620
+
+YOLO Benchmark Run 3:
+
+Computation: completed in 1.406887492 secs
+Upload to S3 bucket: completed in 1.458337294 secs
+Total bytes transferred from the cloud: 765576 bytes
+Transfer cloud application results to edge device: completed in 1.357279000 secs
+Transfer rate from the cloud: 564052.0482524226 bytes per second
+
+Round Trip Time: 3.964991492 secs
+Cloud cost for application computation (£0.016 per hour): £.0000062527
+Edge Only Benchmarks: 
+*****************************************************************************
+
+Transfer edge action results to edge device: completed in .374940000 secs
+
+YOLO Benchmarks:
+*****************************************************************************
+
+YOLO Benchmark Run 1:
+
+Computation: completed in 9.153380001 secs
+Upload to S3 bucket: completed in 3.560577648 secs
+Total bytes transferred from the edge: 879776 bytes
+Transfer edge application results to edge device: completed in .883256000 secs
+Transfer rate from the edge: 996060.0324254802 bytes per second
+
+Round Trip Time: 10.671411001 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000203406
+
+YOLO Benchmark Run 2:
+
+Computation: completed in 7.885916991 secs
+Upload to S3 bucket: completed in 2.912599617 secs
+Total bytes transferred from the edge: 852316 bytes
+Transfer edge application results to edge device: completed in .917172000 secs
+Transfer rate from the edge: 929286.9821581993 bytes per second
+
+Round Trip Time: 9.266377991 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000175240
+
+YOLO Benchmark Run 3:
+
+Computation: completed in 7.752642571 secs
+Upload to S3 bucket: completed in 2.883170490 secs
+Total bytes transferred from the edge: 766068 bytes
+Transfer edge application results to edge device: completed in .955965000 secs
+Transfer rate from the edge: 801355.6981688660 bytes per second
+
+Round Trip Time: 9.614212571 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000172279
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in 1.020023000 secs
+
+Pocket Sphinx Benchmarks:
+*****************************************************************************
+
+PocketSphinx Benchmark Run 1:
+
+Computation: completed in 2.756780149 secs
+Upload to S3 bucket: completed in 1.719799115 secs
+Total bytes transferred from the cloud: 3208 bytes
+Transfer cloud application results to edge device: completed in 1.214810000 secs
+Transfer rate from the cloud: 2640.7421736732 bytes per second
+
+Round Trip Time: 5.684676149 secs
+Real Time Factor: .6049134981 secs
+Cloud cost for application computation (£0.016 per hour): £.0000122522
+
+PocketSphinx Benchmark Run 2:
+
+Computation: completed in 3.825971605 secs
+Upload to S3 bucket: completed in 1.463013811 secs
+Total bytes transferred from the cloud: 3216 bytes
+Transfer cloud application results to edge device: completed in 1.195102000 secs
+Transfer rate from the cloud: 2690.9836984625 bytes per second
+
+Round Trip Time: 6.455053605 secs
+Real Time Factor: .5761463122 secs
+Cloud cost for application computation (£0.016 per hour): £.0000170041
+
+PocketSphinx Benchmark Run 3:
+
+Computation: completed in 3.755109338 secs
+Upload to S3 bucket: completed in 1.436538503 secs
+Total bytes transferred from the cloud: 3216 bytes
+Transfer cloud application results to edge device: completed in 1.147616000 secs
+Transfer rate from the cloud: 2802.3310933273 bytes per second
+
+Round Trip Time: 7.188971338 secs
+Real Time Factor: .5654752885 secs
+Cloud cost for application computation (£0.016 per hour): £.0000166892
+Edge Only Benchmarks: 
+*****************************************************************************
+
+Transfer edge action results to edge device: completed in .344704000 secs
+
+Pocket Sphinx Benchmarks:
+*****************************************************************************
+
+PocketSphinx Benchmark Run 1:
+
+Computation: completed in 9.468640074 secs
+Upload to S3 bucket: completed in 3.565910326 secs
+Total bytes transferred from the edge: 3700 bytes
+Transfer edge application results to edge device: completed in .497193000 secs
+Transfer rate from the edge: 7441.7781424919 bytes per second
+
+Round Trip Time: 10.370501074 secs
+Real Time Factor: 2.0776804388 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000210412
+
+PocketSphinx Benchmark Run 2:
+
+Computation: completed in 13.364458946 secs
+Upload to S3 bucket: completed in 2.912740749 secs
+Total bytes transferred from the edge: 3708 bytes
+Transfer edge application results to edge device: completed in .499850000 secs
+Transfer rate from the edge: 7418.2254676402 bytes per second
+
+Round Trip Time: 14.629858946 secs
+Real Time Factor: 2.0125302883 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000296985
+
+PocketSphinx Benchmark Run 3:
+
+Computation: completed in 14.822768457 secs
+Upload to S3 bucket: completed in 2.901283297 secs
+Total bytes transferred from the edge: 3716 bytes
+Transfer edge application results to edge device: completed in .474236000 secs
+Transfer rate from the edge: 7835.7610978500 bytes per second
+
+Round Trip Time: 15.842525457 secs
+Real Time Factor: 2.2321345441 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000329391
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in 1.021106000 secs
+
+Aeneas Benchmarks:
+*****************************************************************************
+
+Aeneas Benchmark Run 1:
+
+Computation: completed in 1.977575359 secs
+Upload to S3 bucket: completed in 1.478321664 secs
+Total bytes transferred from the cloud: 5736 bytes
+Transfer cloud application results to edge device: completed in 1.200122000 secs
+Transfer rate from the cloud: 4779.5140827349 bytes per second
+
+Round Trip Time: 6.099521359 secs
+Cloud cost for application computation (£0.016 per hour): £.0000087891
+
+Aeneas Benchmark Run 2:
+
+Computation: completed in .849982754 secs
+Upload to S3 bucket: completed in 1.278082114 secs
+Total bytes transferred from the cloud: 5736 bytes
+Transfer cloud application results to edge device: completed in 1.084699000 secs
+Transfer rate from the cloud: 5288.1029668138 bytes per second
+
+Round Trip Time: 5.300266754 secs
+Cloud cost for application computation (£0.016 per hour): £.0000037776
+
+Aeneas Benchmark Run 3:
+
+Computation: completed in .832807857 secs
+Upload to S3 bucket: completed in 1.273732094 secs
+Total bytes transferred from the cloud: 5736 bytes
+Transfer cloud application results to edge device: completed in 1.103144000 secs
+Transfer rate from the cloud: 5199.6838128113 bytes per second
+
+Round Trip Time: 4.780060857 secs
+Cloud cost for application computation (£0.016 per hour): £.0000037013
+
+Aeneas Benchmark Run 4:
+
+Computation: completed in .823250105 secs
+Upload to S3 bucket: completed in 1.272691241 secs
+Total bytes transferred from the cloud: 5736 bytes
+Transfer cloud application results to edge device: completed in 1.114732000 secs
+Transfer rate from the cloud: 5145.6314163404 bytes per second
+
+Round Trip Time: 5.295061105 secs
+Cloud cost for application computation (£0.016 per hour): £.0000036588
+Edge Only Benchmarks: 
+*****************************************************************************
+
+Transfer edge action results to edge device: completed in .392826000 secs
+
+Aeneas Benchmarks:
+*****************************************************************************
+
+Aeneas Benchmark Run 1:
+
+Computation: completed in 3.148975086 secs
+Upload to S3 bucket: completed in 2.888983759 secs
+Total bytes transferred from the edge: 5976 bytes
+Transfer edge application results to edge device: completed in .374621000 secs
+Transfer rate from the edge: 15952.1222782492 bytes per second
+
+Round Trip Time: 4.678565086 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000069976
+
+Aeneas Benchmark Run 2:
+
+Computation: completed in 3.152979529 secs
+Upload to S3 bucket: completed in 2.897146573 secs
+Total bytes transferred from the edge: 5976 bytes
+Transfer edge application results to edge device: completed in .469080000 secs
+Transfer rate from the edge: 12739.8311588641 bytes per second
+
+Round Trip Time: 4.846206529 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000070065
+
+Aeneas Benchmark Run 3:
+
+Computation: completed in 3.125032259 secs
+Upload to S3 bucket: completed in 2.900088521 secs
+Total bytes transferred from the edge: 5976 bytes
+Transfer edge application results to edge device: completed in .364452000 secs
+Transfer rate from the edge: 16397.2210332224 bytes per second
+
+Round Trip Time: 4.820624259 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000069444
+
+Aeneas Benchmark Run 4:
+
+Computation: completed in 3.109618871 secs
+Upload to S3 bucket: completed in 2.888558359 secs
+Total bytes transferred from the edge: 5976 bytes
+Transfer edge application results to edge device: completed in .398797000 secs
+Transfer rate from the edge: 14985.0675907792 bytes per second
+
+Round Trip Time: 4.845793871 secs
+Edge cost for application computation (estimated £0.008 per hour): £.0000069101
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in 2.701847000 secs
+
+YOLO Benchmarks:
+*****************************************************************************
+
+YOLO Benchmark Run 1:
+
+Computation: completed in 1.529578658 secs
+Upload to S3 bucket: completed in 1.668419827 secs
+Total bytes transferred from the cloud: 879284 bytes
+Transfer cloud application results to edge device: completed in 5.037826000 secs
+Transfer rate from the cloud: 174536.3972475428 bytes per second
+
+Round Trip Time: 8.822934658 secs
+Cloud cost for application computation (£0.016 per hour): £.0000067980
+
+YOLO Benchmark Run 2:
+
+Computation: completed in 1.581781653 secs
+Upload to S3 bucket: completed in 1.278910064 secs
+Total bytes transferred from the cloud: 851824 bytes
+Transfer cloud application results to edge device: completed in 4.990924000 secs
+Transfer rate from the cloud: 170674.6085494389 bytes per second
+
+Round Trip Time: 9.558655653 secs
+Cloud cost for application computation (£0.016 per hour): £.0000070300
+
+YOLO Benchmark Run 3:
+
+Computation: completed in 1.391117976 secs
+Upload to S3 bucket: completed in 1.282480921 secs
+Total bytes transferred from the cloud: 765576 bytes
+Transfer cloud application results to edge device: completed in 5.304281000 secs
+Transfer rate from the cloud: 144331.7199824066 bytes per second
+
+Round Trip Time: 9.416834976 secs
+Cloud cost for application computation (£0.016 per hour): £.0000061826
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in 2.167580000 secs
+
+Pocket Sphinx Benchmarks:
+*****************************************************************************
+
+PocketSphinx Benchmark Run 1:
+
+Computation: completed in 2.417921590 secs
+Upload to S3 bucket: completed in 1.612955325 secs
+Total bytes transferred from the cloud: 2936 bytes
+Transfer cloud application results to edge device: completed in 1.895010000 secs
+Transfer rate from the cloud: 1549.3321934976 bytes per second
+
+Round Trip Time: 6.379600590 secs
+Real Time Factor: .5305585966 secs
+Cloud cost for application computation (£0.016 per hour): £.0000107462
+
+PocketSphinx Benchmark Run 2:
+
+Computation: completed in 3.728397531 secs
+Upload to S3 bucket: completed in 1.369689715 secs
+Total bytes transferred from the cloud: 2944 bytes
+Transfer cloud application results to edge device: completed in 1.931680000 secs
+Transfer rate from the cloud: 1524.0619564317 bytes per second
+
+Round Trip Time: 7.691016531 secs
+Real Time Factor: .5614528046 secs
+Cloud cost for application computation (£0.016 per hour): £.0000165704
+
+PocketSphinx Benchmark Run 3:
+
+Computation: completed in 3.947444720 secs
+Upload to S3 bucket: completed in 1.280076276 secs
+Total bytes transferred from the cloud: 2944 bytes
+Transfer cloud application results to edge device: completed in 1.855579000 secs
+Transfer rate from the cloud: 1586.5667805035 bytes per second
+
+Round Trip Time: 9.794551720 secs
+Real Time Factor: .5944387343 secs
+Cloud cost for application computation (£0.016 per hour): £.0000175440
+Cloud Only Benchmarks: 
+*****************************************************************************
+
+Transfer cloud action results to edge device: completed in 1.993335000 secs
+
+Aeneas Benchmarks:
+*****************************************************************************
+
+Aeneas Benchmark Run 1:
+
+Computation: completed in 1.591447411 secs
+Upload to S3 bucket: completed in 1.587489098 secs
+Total bytes transferred from the cloud: 5464 bytes
+Transfer cloud application results to edge device: completed in 2.681954000 secs
+Transfer rate from the cloud: 2037.3205506134 bytes per second
+
+Round Trip Time: 8.183027411 secs
+Cloud cost for application computation (£0.016 per hour): £.0000070730
+
+Aeneas Benchmark Run 2:
+
+Computation: completed in .831709082 secs
+Upload to S3 bucket: completed in 1.276521899 secs
+Total bytes transferred from the cloud: 5464 bytes
+Transfer cloud application results to edge device: completed in 2.357446000 secs
+Transfer rate from the cloud: 2317.7625277524 bytes per second
+
+Round Trip Time: 8.234443082 secs
+Cloud cost for application computation (£0.016 per hour): £.0000036964
+
+Aeneas Benchmark Run 3:
+
+Computation: completed in .820335526 secs
+Upload to S3 bucket: completed in 1.289029410 secs
+Total bytes transferred from the cloud: 5464 bytes
+Transfer cloud application results to edge device: completed in 2.152815000 secs
+Transfer rate from the cloud: 2538.0722449444 bytes per second
+
+Round Trip Time: 7.550842526 secs
+Cloud cost for application computation (£0.016 per hour): £.0000036458
+
+Aeneas Benchmark Run 4:
+
+Computation: completed in .816510898 secs
+Upload to S3 bucket: completed in 1.274296728 secs
+Total bytes transferred from the cloud: 5464 bytes
+Transfer cloud application results to edge device: completed in 3.172861000 secs
+Transfer rate from the cloud: 1722.1050654283 bytes per second
+
+Round Trip Time: 8.588125898 secs
+Cloud cost for application computation (£0.016 per hour): £.0000036289
