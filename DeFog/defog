@@ -36,8 +36,6 @@ edgeuser2=$edgeuser2
 edgeuser3=$edgeuser3
 edgeuser4=$edgeuser4
 
-
-
 awskey=$awskey
 cloudpublicip=$cloudpublicip
 
@@ -208,7 +206,8 @@ function nodes_loadavg {
   			#echo loadavarage of $clouduser is $cpu_usage5
 
   			echo -e
-  			declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
+
+        declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
   			echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
   			echo -e
   			max=${nodes_loadavarages[0]}
