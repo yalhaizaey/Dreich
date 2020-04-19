@@ -462,11 +462,11 @@ function benchmark_application {
 # benchmark fog application - accepts asset array name, asset name, asset path and application name as parameters.
 function benchmark_fog_app {
 
-	# evaluate paramaters and initialise variables
-	eval array_name="$1"
-	eval new_asset_name="$2"
-	eval asset_path="$3"
-	eval application_name="$4"
+	# evaluate paramaters and initialise variables # benchmark_fog_app "arrPics" "./assets/yolo-assets/yoloimage.jpg" "./assets/yolo-assets/*.jpg" "YOLO"
+	eval array_name="$1"                          # arrPics
+	eval new_asset_name="$2"                      # ./assets/yolo-assets/yoloimage.jpg
+	eval asset_path="$3"                          # ./assets/yolo-assets/*.jpg
+	eval application_name="$4"                    # YOLO
 
 	# declare asset array, asset name and counter
 	declare -a $array_name

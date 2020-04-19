@@ -142,7 +142,7 @@ function main {
 	echo "The processing now is running from the cloud/edge devices!!"
 	echo "Navigate to /home/pi/defog/yolobuild/YOLO/docker"
 	# update config folder privileges to prevent accidental mutation or deletion
-	chmod 400 configs
+	#chmod 400 configs
 	echo -e
 
 	# environment/pipeline user input is provided by the sourced defog.sh and defogExecute.sh scripts. This is tested to determine what bench function to invoke for the current pipeline

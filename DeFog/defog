@@ -191,25 +191,28 @@ function nodes_loadavg {
         # remotely access edge nodes and read the current loadavarage
   			echo "Reading loadaverage of the available edge nodes:"
   			cpu_usage1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/loadavg | awk '{print $1}')
-  			echo loadavarage of $edgeaddress1 is $cpu_usage1
-
   			cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
-  			echo loadavarage of $edgeaddress2 is $cpu_usage2
-
   			cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
-  			echo loadavarage of $edgeaddress3 is $cpu_usage3
-
         cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
-  			echo loadavarage of $edgeaddress4 is $cpu_usage4
+        #cpu_usage5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/loadavg | awk '{print $1}')
 
-  			#cpu_usage5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/loadavg | awk '{print $1}')
-  			#echo loadavarage of $clouduser is $cpu_usage5
+        echo loadavarage of $edgeaddress1 is $cpu_usage1
+        echo loadavarage of $edgeaddress2 is $cpu_usage2
+        echo loadavarage of $edgeaddress3 is $cpu_usage3
+        echo loadavarage of $edgeaddress4 is $cpu_usage4
+        #echo loadavarage of $clouduser is $cpu_usage5
 
   			echo -e
-
         declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
-  			echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
+        echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
   			echo -e
+
+        #for i in "${nodes_loadavarages[@]}";
+        #do
+        #  echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
+        #done
+        #echo -e
+
   			max=${nodes_loadavarages[0]}
   			min=${nodes_loadavarages[0]}
   			for i in "${nodes_loadavarages[@]}";
@@ -288,7 +291,6 @@ function nodes_latency {
         #communication_latency4=$(ping -c 1 $edgeaddress4 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
   			#communication_latency5=$(ping -c 1 $cloudaddress | tail -1| awk '{print $4}' | cut -d '/' -f 2)
 
-
   			echo Communciation Latency to $edgeaddress1 is $node1_latency ms
   			echo Communciation Latency to $edgeaddress2 is $node2_latency ms
   			echo Communciation Latency to $edgeaddress3 is $node3_latency ms
@@ -365,7 +367,16 @@ function nodes_latency {
 
 ################################################################################
 function nodes_memory {
-  echo "Under Development"
+  echo "Reading Free Memory of available edge nodes"
+  node1_mem=$(ssh $edgeuser1@$edgeaddress1 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node2_mem=$(ssh $edgeuser2@$edgeaddress2 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node3_mem=$(ssh $edgeuser3@$edgeaddress3 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node4_mem=$(ssh $edgeuser4@$edgeaddress4 free | grep Mem | awk '{print $4/$2 * 100.0}')
+
+  echo Free Memory of $edgeaddress1 is $node1_mem
+  echo Free Memory of $edgeaddress2 is $node2_mem
+  echo Free Memory of $edgeaddress3 is $node3_mem
+  echo Free Memory of $edgeaddress4 is $node4_mem
 }
 
 ################################################################################
@@ -380,27 +391,21 @@ function nodes_specification {
         # remotely access edge devices nodes and read the hardware specifications
   			echo "Reading CPU specifications of available edge nodes:"
   			cpu_info1=$(ssh $edgeuser1@$edgeaddress1 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
-  			echo cpuinfo of $edgeaddress1  is $cpu_info1
-
   			cpu_info2=$(ssh $edgeuser2@$edgeaddress2 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
-  			echo cpuinfo of $edgeaddress2 is $cpu_info2
-
   			cpu_info3=$(ssh $edgeuser3@$edgeaddress3 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
-  			echo cpuinfo of $edgeaddress3 is $cpu_info3
-
         cpu_info4=$(ssh $edgeuser4@$edgeaddress4 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
-  			echo cpuinfo of $edgeaddress4 is $cpu_info4
+        #cpu_info5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
 
-  			#cpu_info5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/cpuinfo | awk -F: '/model name/ {name=$2} END {print name}')
-  			#echo cpuinfo of $cloudaddress is $cpu_info5
-
+        echo cpuinfo of $edgeaddress1 is $cpu_info1
+        echo cpuinfo of $edgeaddress2 is $cpu_info2
+        echo cpuinfo of $edgeaddress3 is $cpu_info3
+        echo cpuinfo of $edgeaddress4 is $cpu_info4
+        #echo cpuinfo of $cloudaddress is $cpu_info5
 
   			##########################################################################
   			#comapare the loadavarages and select the deivce that has the min loadavarage
   			echo -e
   			declare nodes_infos=($cpu_info1 $cpu_info2 $cpu_info3 $cpu_info4)
-  			echo nodes cpu of the avilable edge nodes =  ${nodes_cpus[*]}
-  			echo -e
 
   			max=${nodes_infos[0]}
   			min=${nodes_infos[0]}
@@ -460,6 +465,56 @@ function nodes_specification {
   	#echo device that has the minimum workload is $edgeaddress
   	echo Workload will be offloaded to edge node $edgeaddress
 
+}
+################################################################################
+function profiling_nodes {
+  echo
+  echo "Profiling edge nodes:"
+  echo
+  echo "Reading loadaverage of the available edge nodes:"
+  cpu_usage1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/loadavg | awk '{print $1}')
+  cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
+  cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
+  cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
+  echo loadavarage of $edgeaddress1 is $cpu_usage1
+  echo loadavarage of $edgeaddress2 is $cpu_usage2
+  echo loadavarage of $edgeaddress3 is $cpu_usage3
+  echo loadavarage of $edgeaddress4 is $cpu_usage4
+  echo
+
+  echo "Communication Latency to the available Edge Nodes:"
+  node1_latency=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+  node2_latency=$(ping -c 1 $edgeaddress2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+  node3_latency=$(ping -c 1 $edgeaddress3 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+  node4_latency=$(ping -c 1 $edgeaddress4 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+  echo Communciation Latency to $edgeaddress1 is $node1_latency ms
+  echo Communciation Latency to $edgeaddress2 is $node2_latency ms
+  echo Communciation Latency to $edgeaddress3 is $node3_latency ms
+  echo Communciation Latency to $edgeaddress4 is $node4_latency ms
+  echo
+
+  echo "Reading Free Memory of available edge nodes"
+  node1_mem=$(ssh $edgeuser1@$edgeaddress1 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node2_mem=$(ssh $edgeuser2@$edgeaddress2 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node3_mem=$(ssh $edgeuser3@$edgeaddress3 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node4_mem=$(ssh $edgeuser4@$edgeaddress4 free | grep Mem | awk '{print $4/$2 * 100.0}')
+
+  echo Free Memory of $edgeaddress1 is $node1_mem ''%
+  echo Free Memory of $edgeaddress2 is $node2_mem %
+  echo Free Memory of $edgeaddress3 is $node3_mem %
+  echo Free Memory of $edgeaddress4 is $node4_mem %
+  echo
+
+  echo "Reading CPU specifications of available edge nodes:"
+  cpu_info1=$(ssh $edgeuser1@$edgeaddress1 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
+  cpu_info2=$(ssh $edgeuser2@$edgeaddress2 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
+  cpu_info3=$(ssh $edgeuser3@$edgeaddress3 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
+  cpu_info4=$(ssh $edgeuser4@$edgeaddress4 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
+  echo cpuinfo of $edgeaddress1 is $cpu_info1
+  echo cpuinfo of $edgeaddress2 is $cpu_info2
+  echo cpuinfo of $edgeaddress3 is $cpu_info3
+  echo cpuinfo of $edgeaddress4 is $cpu_info4
+  echo
 }
 
 
@@ -867,9 +922,10 @@ function display_help {
 # application main
 
 	create_result_files
+  profiling_nodes
 	#display_ascii_header
 	#display_help $1
-	applications_user_input   # choose application first then choose the deployment environment (Cloud / edge)
+  applications_user_input  # choose application first then choose the deployment environment (Cloud / edge)
   env_user_input
 
 	if [ "$environment" == "-c" ]; # cloud only
@@ -892,7 +948,7 @@ function display_help {
 		echo "" | tee -a $verbose_filename.txt
 
     #applications_user_input       # choose application first # changed by Yousef
-		edgeaddress_selector_modified  #added by Yousef
+		edgeaddress_selector_modified  # added by Yousef
 		#actions_user_input # deleted by Yousef
 		#applications_user_input # moved up
 		setup_jmeter
