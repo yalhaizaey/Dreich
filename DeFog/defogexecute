@@ -484,8 +484,8 @@ function benchmark_fog_app {
 		metricsValues[18]=$application_name
 		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
 
-		if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress;
-		elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;
+		if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
+	elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
 		#elif [ "$environment" == "-b" ];
 		fi
 

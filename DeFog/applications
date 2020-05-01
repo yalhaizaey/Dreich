@@ -55,6 +55,7 @@ function run_docker_app {
 	echo -e #added by Yousef
 	# invoke the specified run script for a fog application on the Cloud or Edge
 	. ${runscript} ${currentapp} ${currentplatform}
+	#(. runedge2.sh ${currentapp} ${currentplatform}) #To invoke a docker image in another docker container
 
   echo -e
 	echo -n -e DONE running ${applicationname}
@@ -107,7 +108,9 @@ function edgebench {
 	# $ test is used to determine if the user value has been provided to invoke a specic fog application
 	# the run_docker_app function is invoked and provided the path, application name, run script, application id and platform ID (0 = Edge Only instance)
 	# iPokemon and Aeneas are also run on these pipelines. The run_docker_ipokemon is executed if the user provides input to benchamrk iPokemon.
+
 	test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0"
+	#(test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge2.sh" "0" "0")
 	test $run_psphinx && run_docker_app "psphinxbuild/PocketSphinx/docker" "PocketSphinx" "runedge.sh" "1" "0"
 	test $run_aeneas && run_docker_app "aeneasbuild/Aeneas/docker" "Aeneas" "runedge.sh" "2" "0"
 	test $run_ipokemon && run_docker_ipokemon
@@ -147,7 +150,7 @@ function main {
 
 	# environment/pipeline user input is provided by the sourced defog.sh and defogExecute.sh scripts. This is tested to determine what bench function to invoke for the current pipeline
     test $run_cloud && cloudbench
-    test $run_edge && edgebench
+    test $run_edge && edgebench                #& (test $run_edge && edgebench1)
 	  test $run_both_cloud && bothcloudbench
     test $run_both_edge && bothedgebench
 }

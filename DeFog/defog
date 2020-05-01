@@ -71,7 +71,6 @@ HELP
 # BUT based on curret situation of the devices:
 
 # added by Yousef
-
 function edgeaddress_selector_modified {
 	if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
 	then
@@ -103,7 +102,6 @@ function edgeaddress_selector_modified {
 ################################################################################
 #utlity function to offload the workload to a random node device
 #added by Yousef
-
 function random_selector {
 
 	if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
@@ -176,9 +174,6 @@ function dynamic_selector {
        echo "Wrong input, try again";;
     esac
   done
-
-  #use some external heuristics/methods to sechdul assignment for you
-  #python /Users/Yousef/Documents/DeFog-master/assing/assignment.py
 }
 
 ################################################################################
@@ -206,12 +201,6 @@ function nodes_loadavg {
         declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
         echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
   			echo -e
-
-        #for i in "${nodes_loadavarages[@]}";
-        #do
-        #  echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
-        #done
-        #echo -e
 
   			max=${nodes_loadavarages[0]}
   			min=${nodes_loadavarages[0]}
@@ -274,7 +263,6 @@ function nodes_loadavg {
 
 ################################################################################
 function nodes_latency {
-
   	if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
   	then
   		while true; do
@@ -299,7 +287,7 @@ function nodes_latency {
   			#echo Communciation Latency to the Cloud-AWS is $communication_latency5 ms
 
   			########################################################################
-  			#comapare the loadavarages and select the deivce that has the min loadavarage
+  			#comapare the pings and select the deivce that has the min latency
   			echo -e
   			declare nodes_latency=($node1_latency $node2_latency $node3_latency $node4_latency)
   			echo Communication Latency of the avilable edge nodes =  ${nodes_latency[*]}
@@ -315,7 +303,7 @@ function nodes_latency {
   			echo maximum nodes_latency is $max
   			echo minimum nodes_latency is $min
 
-  			#to find the index of device with maximum loadavarage
+  			#to find the index of device with maximum latency
   			for i in "${!nodes_latency[@]}"; do
   			   if [[ "${nodes_latency[$i]}" = "${max}" ]]; then
   			     device1="${i}"
@@ -323,7 +311,7 @@ function nodes_latency {
   			   fi
   			done
 
-  			#To find the index of device with minimum loadavarage
+  			#To find the index of device with minimum latecny
   			for i in "${!nodes_latency[@]}"; do
   			   if [[ "${nodes_latency[$i]}" = "${min}" ]]; then
   			     device2="${i}"
@@ -332,7 +320,7 @@ function nodes_latency {
   			done
 
   			########################################################################
-  			#edge_device = the deivce that has min loadavarage
+  			#edge_device = the deivce that has min latency
   			edge_device=$device2
 
   		  case $edge_device in
@@ -359,24 +347,89 @@ function nodes_latency {
   		done
   	fi
   	echo ""
-  	#echo device that has the maximum workload is $
-  	#echo device that has the minimum workload is $edgeaddress
   	echo Workload will be offloaded to edge node $edgeaddress
 
 }
 
 ################################################################################
 function nodes_memory {
-  echo "Reading Free Memory of available edge nodes"
-  node1_mem=$(ssh $edgeuser1@$edgeaddress1 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node2_mem=$(ssh $edgeuser2@$edgeaddress2 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node3_mem=$(ssh $edgeuser3@$edgeaddress3 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node4_mem=$(ssh $edgeuser4@$edgeaddress4 free | grep Mem | awk '{print $4/$2 * 100.0}')
 
-  echo Free Memory of $edgeaddress1 is $node1_mem
-  echo Free Memory of $edgeaddress2 is $node2_mem
-  echo Free Memory of $edgeaddress3 is $node3_mem
-  echo Free Memory of $edgeaddress4 is $node4_mem
+  if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
+  then
+    while true; do
+      echo "Reading Free Memory of available edge nodes"
+      node1_mem=$(ssh $edgeuser1@$edgeaddress1 free --mega | grep Mem | awk '{print $4}')
+      node2_mem=$(ssh $edgeuser2@$edgeaddress2 free --mega | grep Mem | awk '{print $4}')
+      node3_mem=$(ssh $edgeuser3@$edgeaddress3 free --mega | grep Mem | awk '{print $4}')
+      node4_mem=$(ssh $edgeuser4@$edgeaddress4 free --mega | grep Mem | awk '{print $4}')
+
+      echo Free Memory of $edgeaddress1 is $node1_mem megabytes
+      echo Free Memory of $edgeaddress2 is $node2_mem megabytes
+      echo Free Memory of $edgeaddress3 is $node3_mem megabytes
+      echo Free Memory of $edgeaddress4 is $node4_mem megabytes
+
+  ################################################################################
+  #comapare the RAM and select the deivce that has the max
+     echo -e
+     declare nodes_mem=($node1_mem $node2_mem $node3_mem $node4_mem)
+     echo Free Memory of the avilable edge nodes =  ${nodes_mem[*]}
+     echo -e
+
+     max=${nodes_mem[0]}
+     min=${nodes_mem[0]}
+     for i in "${nodes_mem[@]}";
+     do
+       (( $(echo "$i > $max" |bc -l) )) && max=$i
+       (( $(echo "$i < $min" |bc -l) )) && min=$i
+     done
+     echo maximum memory is $max
+     echo minimum memory is $min
+
+     #to find the index of device with maximum free memory
+     for i in "${!nodes_mem[@]}"; do
+       if [[ "${nodes_mem[$i]}" = "${max}" ]]; then
+       device1="${i}"
+       echo index of maximum is $device1;
+     fi
+   done
+
+   #To find the index of device with minimum free memory
+   for i in "${!nodes_mem[@]}"; do
+     if [[ "${nodes_mem[$i]}" = "${min}" ]]; then
+       device2="${i}"
+      echo index of minimum is $device2;
+     fi
+   done
+
+  ########################################################################
+  #edge_device = the deivce that has max free memory
+  edge_device=$device1
+
+  case $edge_device in
+  '0')
+     edgeaddress=$edgeaddress1
+     edgeuser=$edgeuser1
+     break;;
+  '1')
+     edgeaddress=$edgeaddress2
+     edgeuser=$edgeuser2
+     break;;
+  '2')
+     edgeaddress=$edgeaddress3
+     edgeuser=$edgeuser3
+     break;;
+  '3')
+     edgeaddress=$edgeaddress4
+     edgeuser=$edgeuser4
+     break;;
+  *)
+     echo "Wrong input, try again";;
+  esac
+done
+fi
+echo ""
+echo Workload will be offloaded to edge node $edgeaddress
+
 }
 
 ################################################################################
@@ -417,7 +470,7 @@ function nodes_specification {
   			echo maximum cpu is $max
   			echo minimum cpu is $min
 
-  			#to find the index of device with maximum loadavarage
+  			#to find the index of device with maximum value
   			for i in "${!nodes_infos[@]}"; do
   			   if [[ "${nodes_infos[$i]}" = "${max}" ]]; then
   			     device1="${i}"
@@ -425,7 +478,7 @@ function nodes_specification {
   			   fi
   			done
 
-  			#To find the index of device with minimum loadavarage
+  			#To find the index of device with minimum value
   			for i in "${!nodes_infos[@]}"; do
   			   if [[ "${nodes_infos[$i]}" = "${min}" ]]; then
   			     device2="${i}"
@@ -434,7 +487,7 @@ function nodes_specification {
   			done
 
   			##########################################################################
-  			#edge_device = the deivce that has min loadavarage
+  			#edge_device = the deivce that has max MIPS value
   			edge_device=$device1
 
   		  case $edge_device in
@@ -461,8 +514,6 @@ function nodes_specification {
   		done
   	fi
   	echo ""
-  	#echo device that has the maximum workload is $
-  	#echo device that has the minimum workload is $edgeaddress
   	echo Workload will be offloaded to edge node $edgeaddress
 
 }
@@ -476,17 +527,19 @@ function profiling_nodes {
   cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
   cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
   cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
+
   echo loadavarage of $edgeaddress1 is $cpu_usage1
   echo loadavarage of $edgeaddress2 is $cpu_usage2
   echo loadavarage of $edgeaddress3 is $cpu_usage3
   echo loadavarage of $edgeaddress4 is $cpu_usage4
   echo
 
-  echo "Communication Latency to the available Edge Nodes:"
+  echo "Reading Communication Latency to the available Edge Nodes:"
   node1_latency=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
   node2_latency=$(ping -c 1 $edgeaddress2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
   node3_latency=$(ping -c 1 $edgeaddress3 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
   node4_latency=$(ping -c 1 $edgeaddress4 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+
   echo Communciation Latency to $edgeaddress1 is $node1_latency ms
   echo Communciation Latency to $edgeaddress2 is $node2_latency ms
   echo Communciation Latency to $edgeaddress3 is $node3_latency ms
@@ -494,15 +547,15 @@ function profiling_nodes {
   echo
 
   echo "Reading Free Memory of available edge nodes"
-  node1_mem=$(ssh $edgeuser1@$edgeaddress1 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node2_mem=$(ssh $edgeuser2@$edgeaddress2 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node3_mem=$(ssh $edgeuser3@$edgeaddress3 free | grep Mem | awk '{print $4/$2 * 100.0}')
-  node4_mem=$(ssh $edgeuser4@$edgeaddress4 free | grep Mem | awk '{print $4/$2 * 100.0}')
+  node1_mem=$(ssh $edgeuser1@$edgeaddress1 free --mega | grep Mem | awk '{print $4}')
+  node2_mem=$(ssh $edgeuser2@$edgeaddress2 free --mega | grep Mem | awk '{print $4}')
+  node3_mem=$(ssh $edgeuser3@$edgeaddress3 free --mega | grep Mem | awk '{print $4}')
+  node4_mem=$(ssh $edgeuser4@$edgeaddress4 free --mega | grep Mem | awk '{print $4}')
 
-  echo Free Memory of $edgeaddress1 is $node1_mem ''%
-  echo Free Memory of $edgeaddress2 is $node2_mem %
-  echo Free Memory of $edgeaddress3 is $node3_mem %
-  echo Free Memory of $edgeaddress4 is $node4_mem %
+  echo Free Memory of $edgeaddress1 is $node1_mem megabytes
+  echo Free Memory of $edgeaddress2 is $node2_mem megabytes
+  echo Free Memory of $edgeaddress3 is $node3_mem megabytes
+  echo Free Memory of $edgeaddress4 is $node4_mem megabytes
   echo
 
   echo "Reading CPU specifications of available edge nodes:"
@@ -510,13 +563,13 @@ function profiling_nodes {
   cpu_info2=$(ssh $edgeuser2@$edgeaddress2 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
   cpu_info3=$(ssh $edgeuser3@$edgeaddress3 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
   cpu_info4=$(ssh $edgeuser4@$edgeaddress4 grep bogomips -i /proc/cpuinfo | tail -1| awk '{print $3}' | cut -d '/' -f 2)
+
   echo cpuinfo of $edgeaddress1 is $cpu_info1
   echo cpuinfo of $edgeaddress2 is $cpu_info2
   echo cpuinfo of $edgeaddress3 is $cpu_info3
   echo cpuinfo of $edgeaddress4 is $cpu_info4
   echo
 }
-
 
 ################################################################################
 # utility function to manually determine the edge device address (i.e. ipaddress) based on user input
@@ -923,9 +976,15 @@ function display_help {
 
 	create_result_files
   profiling_nodes
-	#display_ascii_header
+  
+  #echo "Decision Making:"
+  #python /Users/Yousef/Documents/DeFog-master/DeFog/rm_cp.py
+  #python /Users/Yousef/Documents/DeFog-master/DeFog/rm_mip.py
+  #display_ascii_header
 	#display_help $1
+
   applications_user_input  # choose application first then choose the deployment environment (Cloud / edge)
+
   env_user_input
 
 	if [ "$environment" == "-c" ]; # cloud only
@@ -934,9 +993,6 @@ function display_help {
 		echo -e "Cloud Only Benchmarks: " | tee -a $verbose_filename.txt
 		seperator
 		echo "" | tee -a $verbose_filename.txt
-
-		# actions_user_input # deleted by Yousef
-		#applications_user_input
 		setup_jmeter
 	fi
 
@@ -946,13 +1002,8 @@ function display_help {
 		echo -e "Edge Only Benchmarks: " | tee -a $verbose_filename.txt
 		seperator
 		echo "" | tee -a $verbose_filename.txt
-
-    #applications_user_input       # choose application first # changed by Yousef
 		edgeaddress_selector_modified  # added by Yousef
-		#actions_user_input # deleted by Yousef
-		#applications_user_input # moved up
 		setup_jmeter
-
 	fi
 
 	if [ "$environment" == "-b" ]; # cloud/edge
@@ -961,11 +1012,9 @@ function display_help {
 		echo -e "Edge/Cloud Benchmarks: " | tee -a $verbose_filename.txt
 		seperator
 		echo "" | tee -a $verbose_filename.txt
-
 		manual_selector
 		actions="-n"
 		applications_cloud_edge_user_input
-
 	fi
 
 	echo -e

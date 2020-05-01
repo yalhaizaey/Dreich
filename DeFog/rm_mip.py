@@ -9,15 +9,14 @@ def main():
   start = time.time()
   # We might feed this information from the bash script
   cost = [
-          [50, 50, 50, 50, 50, 50, 50, 50, 50, 50],    #pi2
-          [40, 40, 40, 40, 40, 40, 40, 40, 40, 40],    #pi3B
-          [35, 35, 35, 35, 35, 35, 35, 35, 35, 35],    #pi3B+
-          [10, 10, 11, 11, 10, 10, 10, 11, 10, 10],   #pi4
-          [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]]        #cloud
+         [50, 50, 50, 30, 30, 30, 10, 10, 10, 50, 30, 10],    #pi2
+         [40, 40, 40, 25, 25, 25, 9, 9, 9, 40, 25, 9],        #pi3B
+         [35, 35, 35, 22, 22, 22, 8, 8, 8, 35, 22, 8],        #pi3B+
+         [10, 10, 11, 15,15,15, 7, 7, 7, 10, 15, 7]]          #pi4
+         #[9, 9, 9, 10, 10, 10, 9, 9 ,9 ]]                    #cloud
 
-
-  sizes = [10, 7, 3, 12, 15, 4, 11, 5, 4, 3]
-  total_size_max = 30 
+  sizes = [10, 7, 3, 12, 15, 4, 11, 5, 4, 10, 15, 7]
+  total_size_max = 100
   num_workers = len(cost)
   num_tasks = len(cost[1])
   # Variables
@@ -52,7 +51,7 @@ def main():
       for j in range(num_tasks):
 
         if solver.Value(x[i][j]) == 1:
-          print('Edge node', i, ' assigned to task ', j, '  Cost = ', cost[i][j])
+          print('Worker ', i, ' assigned to task ', j, '  Cost = ', cost[i][j])
     print()
     end = time.time()
     print("Time = ", round(end - start, 4), "seconds")
