@@ -975,11 +975,11 @@ function display_help {
 # application main
 
 	create_result_files
-  #profiling_nodes
+  profiling_nodes
 
   #echo "Decision Making:"
-  #python /Users/Yousef/Documents/DeFog-master/DeFog/rm_cp.py
   #python /Users/Yousef/Documents/DeFog-master/DeFog/rm_mip.py
+
   #display_ascii_header
 	#display_help $1
 
