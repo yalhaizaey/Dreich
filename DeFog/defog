@@ -151,12 +151,13 @@ function dynamic_selector {
   while true; do
     echo ""
     echo -e "what parameters would you like to consider:"
-      echo "loadavarage    - Enter 1"
-      echo "latency        - Enter 2"
-      echo "Memory         - Enter 3"
-      echo "CPU Hardware   - Enter 4"
+      echo "loadavarage     - Enter 1"
+      echo "latency         - Enter 2"
+      echo "Memory          - Enter 3"
+      echo "CPU Hardware    - Enter 4"
+      echo "Decision-making - Enter 5"
       echo ""
-    read -p "Enter [1,2,3,4]: " ANS
+    read -p "Enter [1,2,3,4,5]: " ANS
     case $ANS in
     '1')
        nodes_loadavg
@@ -169,6 +170,9 @@ function dynamic_selector {
        break;;
     '4')
        nodes_specification
+       break;;
+    '5')
+       decision-making
        break;;
     *)
        echo "Wrong input, try again";;
@@ -569,6 +573,16 @@ function profiling_nodes {
   echo cpuinfo of $edgeaddress3 is $cpu_info3
   echo cpuinfo of $edgeaddress4 is $cpu_info4
   echo
+}
+################################################################################
+# utility function to manually determine the edge device based on deceion making alogrithm
+function decision-making {
+  echo "Decision Making:"
+  python /Users/Yousef/Documents/Dreich/DeFog/rm_mip.py
+  echo Workload will be offloaded to edge node $edgeaddress4
+
+  edgeaddress=$edgeaddress4
+  edgeuser=$edgeuser4
 }
 
 ################################################################################
@@ -975,10 +989,7 @@ function display_help {
 # application main
 
 	create_result_files
-  profiling_nodes
-
-  #echo "Decision Making:"
-  #python /Users/Yousef/Documents/DeFog-master/DeFog/rm_mip.py
+  #profiling_nodes
 
   #display_ascii_header
 	#display_help $1
