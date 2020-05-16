@@ -142,8 +142,7 @@ function main {
 	# navigate to the main defog folder on the Cloud or Edge
 	cd defog
 
-	echo "The processing now is running from the cloud/edge devices!!"
-	echo "Navigate to /home/pi/defog/yolobuild/YOLO/docker"
+	echo "The processing now is running in the cloud/edge devices!!"
 	# update config folder privileges to prevent accidental mutation or deletion
 	#chmod 400 configs
 	echo -e
