@@ -188,7 +188,7 @@ function nodes_loadavg {
   			echo ""
   		  ##########################################################################
         # remotely access edge nodes and read the current loadavarage
-  			echo "Reading Loadaverage of the available edge nodes:"
+  			echo "Reading loadaverage of the available edge nodes:"
   			cpu_usage1=$(ssh $edgeuser1@$edgeaddress1 cat /proc/loadavg | awk '{print $1}')
   			cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
   			cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
@@ -273,7 +273,7 @@ function nodes_latency {
   			echo ""
   			########################################################################
   			# communication latency using ping
-  			echo "Communication Latency to the available edge nodes:"
+  			echo "Communication Latency to the available Edge Nodes:"
   			#communication_latency1=$(ping -c 1 $edgeaddress1)
   			#extract avg time in ping
   			node1_latency=$(ping -c 1 $edgeaddress1 | tail -1| awk '{print $4}' | cut -d '/' -f 2)
@@ -361,7 +361,7 @@ function nodes_memory {
   if [ "$environment" == "-e" ] || [ "$environment" == "-b" ];
   then
     while true; do
-      echo "Reading Free Memory of the available edge nodes"
+      echo "Reading Free Memory of available edge nodes"
       node1_mem=$(ssh $edgeuser1@$edgeaddress1 free --mega | grep Mem | awk '{print $4}')
       node2_mem=$(ssh $edgeuser2@$edgeaddress2 free --mega | grep Mem | awk '{print $4}')
       node3_mem=$(ssh $edgeuser3@$edgeaddress3 free --mega | grep Mem | awk '{print $4}')
@@ -1101,24 +1101,6 @@ function benchmark_edge_actions {
 # passing the relevant variables as file parameters. The results are then transferred back from the edge as necessary.
 function benchmark_edge_applications {
 
-    # select edge node based on different functions
-    #manual_selector                              # to select edge node manually
-    random_selector                             # to select edge node randomly
-    #nodes_loadavg                               # to select edge node min loadavg
-    #nodes_latency                               # to select edge node min latecny
-    #nodes_memory                                # to select edge node max memory
-    #nodes_specification
-    #decision-making                             # to select edge node based on decision-making function
-
-    edgeaddress=$edgeaddress  #some function to retun Ip address of the device
-	  edgeuser=$edgeuser
-
-    benchmark_edge_actions
-    transfer_config "1"
-    #metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
-    if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
-    elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
-    fi
     # invoke the secure copy protocol asset function
     echo -e "Sending asset at path: " $asset "to application..."
     scp_asset
@@ -1494,10 +1476,6 @@ function benchmark_fog_app {
 		# reset/create the metric array
 		create_metric_array
 
-		# Update the pipeline and application metric values
-		metricsValues[17]=$pipeline
-		metricsValues[18]=$application_name
-
 		# Output to the terminal and results file using tee
 		echo -e "" | tee -a $verbose_filename.txt
 		echo $application_name Benchmark Run $count: | tee -a $verbose_filename.txt
@@ -1506,6 +1484,29 @@ function benchmark_fog_app {
 		# update array and asset variables for the current iteration
 		array_name=("${assets_name[@]}" "$file")
 		asset=$array_name
+
+    # select edge node based on different functions
+    #manual_selector                              # to select edge node manually
+    random_selector                               # to select edge node randomly
+    #nodes_loadavg                                # to select edge node min loadavg
+    #nodes_latency                                # to select edge node min latecny
+    #nodes_memory                                 # to select edge node max memory
+    #nodes_specification
+    #decision-making                             # to select edge node based on decision-making function
+
+    #edgeaddress=$edgeaddress  #some function to retun Ip address of the device
+	  #edgeuser=$edgeuser
+
+    #metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
+    if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
+    elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
+    fi
+		# Update the pipeline and application metric values
+		metricsValues[17]=$pipeline
+		metricsValues[18]=$application_name
+
+    benchmark_edge_actions
+    transfer_config "1"
 
 		# invoke the secure copy protocol asset function
 		#echo -e "Sending asset at path: " $asset "to application..."
@@ -1523,6 +1524,28 @@ function benchmark_fog_app {
 
 #########################################################################################################################
 function benchmark_aeneas {
+
+  # select edge node based on different functions
+  #manual_selector                              # to select edge node manually
+  random_selector                               # to select edge node randomly
+  #nodes_loadavg                                # to select edge node min loadavg
+  #nodes_latency                                # to select edge node min latecny
+  #nodes_memory                                 # to select edge node max memory
+  #nodes_specification
+  #decision-making                             # to select edge node based on decision-making function
+  #edgeaddress=$edgeaddress  #some function to retun Ip address of the device
+  #edgeuser=$edgeuser
+
+  #metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
+  if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
+  elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
+  fi
+  # Update the pipeline and application metric values
+  metricsValues[17]=$pipeline
+  metricsValues[18]=$application_name
+
+  benchmark_edge_actions
+  transfer_config "1"
 
 	declare -a arrAudios
 
