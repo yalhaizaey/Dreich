@@ -1486,8 +1486,8 @@ function benchmark_fog_app {
 		asset=$array_name
 
     # select edge node based on different functions
-    #manual_selector                              # to select edge node manually
-    random_selector                               # to select edge node randomly
+    manual_selector                              # to select edge node manually
+    #random_selector                               # to select edge node randomly
     #nodes_loadavg                                # to select edge node min loadavg
     #nodes_latency                                # to select edge node min latecny
     #nodes_memory                                 # to select edge node max memory
@@ -1497,7 +1497,6 @@ function benchmark_fog_app {
     #edgeaddress=$edgeaddress  #some function to retun Ip address of the device
 	  #edgeuser=$edgeuser
 
-    #metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
     if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
     elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
     fi
@@ -1514,8 +1513,11 @@ function benchmark_fog_app {
 		#echo -e "DONE - transferring asset payload to destination"
 
 		# invoke the benchmark_application function
-		benchmark_application
-
+		benchmark_application &
+    if (($count%4==0));
+    then
+    wait
+    fi
 		# increment counter
 		((count++))
 
@@ -1526,8 +1528,8 @@ function benchmark_fog_app {
 function benchmark_aeneas {
 
   # select edge node based on different functions
-  #manual_selector                              # to select edge node manually
-  random_selector                               # to select edge node randomly
+  manual_selector                              # to select edge node manually
+  #random_selector                               # to select edge node randomly
   #nodes_loadavg                                # to select edge node min loadavg
   #nodes_latency                                # to select edge node min latecny
   #nodes_memory                                 # to select edge node max memory
