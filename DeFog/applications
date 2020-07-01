@@ -47,6 +47,7 @@ function run_docker_app {
 	eval runscript="$3"                  #"runedge.sh"
 	eval currentapp="$4"                 #"0"
 	eval currentplatform="$5"            #"0"
+	eval containername="$6"               #"containername"
 
 	# navigate to the specified path
 	cd ${path}                           #cd /home/pi/defog/yolobuild/YOLO/docker
@@ -54,8 +55,8 @@ function run_docker_app {
 	echo -n -e Running ${applicationname} container...
 	echo -e #added by Yousef
 	# invoke the specified run script for a fog application on the Cloud or Edge
-	. ${runscript} ${currentapp} ${currentplatform}
-	#(. runedge2.sh ${currentapp} ${currentplatform}) #To invoke a docker image in another docker container
+	#. ${runscript} ${currentapp} ${currentplatform}
+	. ${runscript} ${currentapp} ${currentplatform} ${containername}
 
   echo -e
 	echo -n -e DONE running ${applicationname}
@@ -109,10 +110,11 @@ function edgebench {
 	# the run_docker_app function is invoked and provided the path, application name, run script, application id and platform ID (0 = Edge Only instance)
 	# iPokemon and Aeneas are also run on these pipelines. The run_docker_ipokemon is executed if the user provides input to benchamrk iPokemon.
 
-	test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0"
-	#(test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge2.sh" "0" "0")
-	test $run_psphinx && run_docker_app "psphinxbuild/PocketSphinx/docker" "PocketSphinx" "runedge.sh" "1" "0"
-	test $run_aeneas && run_docker_app "aeneasbuild/Aeneas/docker" "Aeneas" "runedge.sh" "2" "0"
+	#test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0"
+	#test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0" "containername"
+	test $run_yolo && run_docker_app "yolobuild/YOLO/docker" "YOLO" "runedge.sh" "0" "0" $tempContainerName
+	test $run_psphinx && run_docker_app "psphinxbuild/PocketSphinx/docker" "PocketSphinx" "runedge.sh" "1" "0" $tempContainerName
+	test $run_aeneas && run_docker_app "aeneasbuild/Aeneas/docker" "Aeneas" "runedge.sh" "2" "0" $tempContainerName
 	test $run_ipokemon && run_docker_ipokemon
 	test $run_foglamp && run_docker_app "foglampbuild/FogLAMP/docker" "FogLAMP" "runedge.sh" "3" "0"
 
@@ -141,8 +143,8 @@ function cloudbench {
 function main {
 	# navigate to the main defog folder on the Cloud or Edge
 	cd defog
-
 	echo "The processing now is running in the cloud/edge devices!!"
+	echo $tempContainerName this is tem container name
 	# update config folder privileges to prevent accidental mutation or deletion
 	#chmod 400 configs
 	echo -e
@@ -156,8 +158,18 @@ function main {
 
 ###############################################################################################################
 
+
+#value=":cebz:adfsxulhngs:ipjmky:"
+#echo $value
+
 # accept user input passed by defog bash script
-while getopts :cebz:adfsxulhngs:yipjmk opt; do
+#while getopts :cebz:adfsxulhngs:yipjmk: opt; do # orignial code
+while getopts :cebz:adfsxulhngs:ipjmky: opt; do # when application is Yolo
+#while getopts :cebz:adfsxulhngs:ijmkyp: opt; do  # when application is PocketSphinx
+#while getopts :cebz:adfsxulhngs:imkypj: opt; do  # when application is aeneas
+
+#while getopts $value opt; do
+
     case "$opt" in
     a)
       run_downloads=true
@@ -206,15 +218,21 @@ while getopts :cebz:adfsxulhngs:yipjmk opt; do
 			;;
 		j)
 			run_aeneas=true
+			tempContainerName=$OPTARG
+			echo "parameter =$OPTARG"
 			;;
 		k)
 			run_ipokemon=true
 			;;
 		p)
 			run_psphinx=true
+			tempContainerName=$OPTARG
+			echo "parameter =$OPTARG"
 			;;
 		y)
       run_yolo=true
+			tempContainerName=$OPTARG
+			echo "parameter =$OPTARG"
       ;;
 		m)
 			;;
@@ -224,5 +242,5 @@ while getopts :cebz:adfsxulhngs:yipjmk opt; do
       ;;
     esac
 done
-
+shift $(( OPTIND - 1 ))
 main

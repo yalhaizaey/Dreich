@@ -406,7 +406,7 @@ function run_setup {
 	rm -rf dir assets && mkdir assets && chmod 777 assets
 	rm -rf dir results && mkdir results && chmod 777 results
 	rm -rf dir configs && mkdir configs && chmod 777 configs
-
+  echo hi from action.sh
 	echo -e
 }
 

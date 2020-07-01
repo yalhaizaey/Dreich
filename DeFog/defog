@@ -576,13 +576,15 @@ function profiling_nodes {
 }
 ################################################################################
 # utility function to manually determine the edge device based on deceion making alogrithm
+declare -i device_counter=0
 function decision-making {
-  echo "Decision Making:"
-  python /Users/Yousef/Desktop/Dreich-master/DeFog/rm_mip.py
-  echo Workload will be offloaded to edge node $edgeaddress4
+  #echo "Decision Making:"
+  edgeaddress=${new_edge_devices[$device_counter]}
+  edgeuser=$edgeuser1
+  device_counter=$((device_counter+1));
 
-  edgeaddress=$edgeaddress4
-  edgeuser=$edgeuser4
+  echo $device_counter
+
 }
 
 ################################################################################
@@ -926,7 +928,7 @@ function create_result_files {
 	taurus_filename=taurus
 	filenumber=""
 
-	cd results_Yousef    #changed by Yousef.. now all results are stored in the same file.cvs file
+	cd results
 	if [[ -e $verbose_filename.txt ]] ; then
 		i=0
 		while [[ -e $verbose_filename-$i.txt ]] ; do
@@ -1101,13 +1103,22 @@ function benchmark_edge_actions {
 # passing the relevant variables as file parameters. The results are then transferred back from the edge as necessary.
 function benchmark_edge_applications {
 
-    # invoke the secure copy protocol asset function
-    echo -e "Sending asset at path: " $asset "to application..."
+    #invoke the secure copy protocol asset function
+    echo -e "Sending asset at path: " $asset "to application... on" $edgeaddress
     scp_asset
     echo -e "DONE - transferring asset payload to destination"
 
-		echo -e "ssh into edge instance for application benchmarks.."
-		ssh	$edgeuser@$edgeaddress ' sudo bash -s' -- < ./applications $environment $actions $applications
+    #containerName="darknet$1"
+    #containerName="psphinx$1"
+    #echo $containerName
+
+    if [ "$applications" == "-y" ]; then containerName="darknet$1";    #added by Yousef
+  elif [ "$applications" == "-p" ]; then containerName="psphinx$1";  #added by Yousef
+elif [ "$applications" == "-j" ]; then containerName="aeneas$1";  #added by Yousef
+    fi
+
+    echo -e "ssh into edge instance for application benchmarks.."
+		ssh	$edgeuser@$edgeaddress ' sudo bash -s' -- < ./applications $environment $actions $applications $containerName
 		echo -e "DONE - edge ssh session"
 		echo -e
 
@@ -1122,10 +1133,10 @@ function benchmark_edge_applications {
 		metricsValues[11]=$(bc <<< "scale=10;${metricsValues[8]}/${metricsValues[3]}")
 
 		cat cloudresult.txt >> $verbose_filename.txt 2>/dev/null
-		rm cloudresult.txt 2>/dev/null
+		#rm cloudresult.txt 2>/dev/null
 
 		read -a newarr < arrresult.txt
-		rm arrresult.txt 2>/dev/null
+		#rm arrresult.txt 2>/dev/null
 
 		echo -e Total bytes transferred from the edge: ${metricsValues[8]} bytes | tee -a $verbose_filename.txt
 		echo Transfer edge application results to edge device: completed in $runtime secs | tee -a $verbose_filename.txt
@@ -1432,8 +1443,9 @@ function benchmark_application {
 		fi
 		if [ "$environment" == "-e" ]; # edge only
 		then
-			benchmark_edge_applications
-			calc_rtt
+			#benchmark_edge_applications
+      benchmark_edge_applications $1  #$1 = count
+      calc_rtt
 			if [ "${metricsValues[5]}" != "NA" ];
 			then
 				calc_rtf
@@ -1470,11 +1482,24 @@ function benchmark_fog_app {
 	newassetname=$new_asset_name
 	local count=1
 
-	# iterate over all assets in an asset folder
-	for file in $asset_path
+  # to return assingment from decision-making function
+  declare -a new_edge_devices=$(python /Users/Yousef/Desktop/Dreich/DeFog/dm/mip.py)
+  #echo $new_edge_devices
+
+  # iterate over all assets in an asset folder
+  local num_files=${#new_edge_devices[@]}
+  echo "number of files found=" $num_files
+
+  for file in $asset_path
 	do
-		# reset/create the metric array
+    if [ "$applications" == "-y" ]; then newassetname="darknet$count.jpg";    #added by Yousef
+  elif [ "$applications" == "-p" ]; then newassetname="psphinx$count.wav";    #added by Yousef
+    fi
+    #newassetname="darknet$count.jpg"
+
+    # reset/create the metric array
 		create_metric_array
+
 
 		# Output to the terminal and results file using tee
 		echo -e "" | tee -a $verbose_filename.txt
@@ -1485,27 +1510,27 @@ function benchmark_fog_app {
 		array_name=("${assets_name[@]}" "$file")
 		asset=$array_name
 
-    # select edge node based on different functions
-    manual_selector                              # to select edge node manually
-    #random_selector                               # to select edge node randomly
-    #nodes_loadavg                                # to select edge node min loadavg
+    # select edge node based on different resource allocations
+    #manual_selector                              # to select edge node manually
+    #random_selector                              # to select edge node randomly
+    nodes_loadavg                                # to select edge node min loadavg
     #nodes_latency                                # to select edge node min latecny
     #nodes_memory                                 # to select edge node max memory
     #nodes_specification
-    #decision-making                             # to select edge node based on decision-making function
+    #decision-making                             # to select edge node based on OR-function
 
-    #edgeaddress=$edgeaddress  #some function to retun Ip address of the device
-	  #edgeuser=$edgeuser
 
     if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
     elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
     fi
-		# Update the pipeline and application metric values
-		metricsValues[17]=$pipeline
-		metricsValues[18]=$application_name
 
-    benchmark_edge_actions
-    transfer_config "1"
+    # Update the pipeline and application metric values
+    metricsValues[17]=$pipeline
+    metricsValues[18]=$application_name
+    metricsValues[20]=$newassetname
+
+    #benchmark_edge_actions
+    #transfer_config "1"
 
 		# invoke the secure copy protocol asset function
 		#echo -e "Sending asset at path: " $asset "to application..."
@@ -1513,8 +1538,11 @@ function benchmark_fog_app {
 		#echo -e "DONE - transferring asset payload to destination"
 
 		# invoke the benchmark_application function
-		benchmark_application &
-    if (($count%4==0));
+    #benchmark_application $count
+
+    benchmark_application $count &     # & to fork muiltple processes, $count to pass image number as a parameter
+    #if (($count%num_files==0));
+    if (($count%32==0));
     then
     wait
     fi
@@ -1527,16 +1555,13 @@ function benchmark_fog_app {
 #########################################################################################################################
 function benchmark_aeneas {
 
-  # select edge node based on different functions
-  manual_selector                              # to select edge node manually
-  #random_selector                               # to select edge node randomly
-  #nodes_loadavg                                # to select edge node min loadavg
-  #nodes_latency                                # to select edge node min latecny
-  #nodes_memory                                 # to select edge node max memory
-  #nodes_specification
-  #decision-making                             # to select edge node based on decision-making function
-  #edgeaddress=$edgeaddress  #some function to retun Ip address of the device
-  #edgeuser=$edgeuser
+  # to return assingment from decision-making function
+  declare -a new_edge_devices=$(python /Users/Yousef/Desktop/Dreich/DeFog/dm/mip.py)
+  #echo $new_edge_devices
+
+  # iterate over all assets in an asset folder
+  local num_files=${#new_edge_devices[@]}
+  echo "number of files found=" $num_files
 
   #metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
   if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
@@ -1545,9 +1570,12 @@ function benchmark_aeneas {
   # Update the pipeline and application metric values
   metricsValues[17]=$pipeline
   metricsValues[18]=$application_name
+  metricsValues[20]=$newassetname
 
-  benchmark_edge_actions
-  transfer_config "1"
+
+
+  #benchmark_edge_actions
+  #transfer_config "1"
 
 	declare -a arrAudios
 
@@ -1573,9 +1601,22 @@ function benchmark_aeneas {
 		multiassets="true"
 		create_metric_array
 
+    # select edge node based on different functions
+    #manual_selector                              # to select edge node manually
+    #random_selector                               # to select edge node randomly
+    nodes_loadavg                                # to select edge node min loadavg
+    #nodes_latency                                # to select edge node min latecny
+    #nodes_memory                                 # to select edge node max memory
+    #nodes_specification
+    #decision-making                             # to select edge node based on decision-making function
+
+    #edgeaddress=$edgeaddress1  #some function to retun Ip address of the device
+    #edgeuser=$edgeuser1
+
 		metricsValues[17]=$pipeline
 		metricsValues[18]="Aeneas"
 		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
+    metricsValues[20]="aeneas$count"
 
 		echo -e "" | tee -a $verbose_filename.txt
 		echo Aeneas Benchmark Run $count: | tee -a $verbose_filename.txt
@@ -1583,6 +1624,7 @@ function benchmark_aeneas {
 
 		asset=${arrAudios[$j]}
 		newassetname=./assets/aeneas-assets/aeneasaudio.mp3
+
 
 		echo "Sending asset at path: " $asset "to application..."
 		scp_asset
@@ -1597,29 +1639,38 @@ function benchmark_aeneas {
 		asset=${arrTexts[$j]}
 		newassetname=./assets/aeneas-assets/aeneastext.xhtml
 
-		if [ "$environment" != "-b" ];
-		then
-			echo -e "Sending asset at path: " $asset "to application..."
-			scp_asset
-			echo "DONE"
-		fi
+		# if [ "$environment" != "-b" ];
+		# then
+		# 	echo -e "Sending asset at path: " $asset "to application..."
+		# 	scp_asset
+		# 	echo "DONE"
+		# fi
 
-		if [ "$environment" == "-b" ];
-		then
-			local shortasset="${asset##*/}"
-			echo $shortasset > ./aeneas.txt
+		# if [ "$environment" == "-b" ];
+		# then
+		# 	local shortasset="${asset##*/}"
+		# 	echo $shortasset > ./aeneas.txt
+    #
+		# 	asset=./aeneas.txt
+		# 	newassetname=./aeneas.txt
+    #
+		# 	echo -e "Sending asset at path: " $asset "to application..."
+		# 	scp_asset
+		# 	echo "DONE"
+		# fi
 
-			asset=./aeneas.txt
-			newassetname=./aeneas.txt
+		#benchmark_application
 
-			echo -e "Sending asset at path: " $asset "to application..."
-			scp_asset
-			echo "DONE"
-		fi
+		#((count++))
 
-		benchmark_application
-
-		((count++))
+    benchmark_application $count &     # & to fork muiltple processes, $count to pass image number as a parameter
+    #if (($count%num_files==0));
+    if (($count%32==0));
+    then
+    wait
+    fi
+    # increment counter
+    ((count++))
 
 	done
 
@@ -1628,8 +1679,8 @@ function benchmark_aeneas {
 #########################################################################################################################
 # instantiate or reset metric labels and values to default values
 function create_metric_array {
-	declare -g metricsLabels=('T1' 'ET' 'T2' 'T3' 'RTT' 'RTF' 'Cost' 'BytesUp1' 'BytesDown1' 'BytesDown2' 'BytesPerSecUp1' 'BytesPerSecDown1' 'BytesPerSecDown2' 'T4' 'CL' 'FRTT' 'FCL' 'Pipeline' 'Application' 'Device')
-	declare -g metricsValues=('NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA')
+	declare -g metricsLabels=('T1' 'ET' 'S3' 'T3' 'RTT' 'RTF' 'Cost' 'BytesUp1' 'BytesDown1' 'BytesDown2' 'BytesPerSecUp1' 'BytesPerSecDown1' 'BytesPerSecDown2' 'T4' 'CL' 'FRTT' 'FCL' 'Pipeline' 'Application' 'Device' 'imageName')
+	declare -g metricsValues=('NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA' 'NA')
 }
 
 #########################################################################################################################
@@ -1707,6 +1758,12 @@ function seperator {
 ################################################################################
 ################################################################################
 
+# to remove old results and assets
+ssh pi@192.168.1.224 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.168 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.182 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.131 sudo bash /home/pi/defog/setup.sh
+
 #The appalication start here:
 create_result_files
 #profiling_nodes
@@ -1729,7 +1786,6 @@ then
   echo -e "Edge Only Benchmarks: " | tee -a $verbose_filename.txt
   seperator
   echo "" | tee -a $verbose_filename.txt
-  #edgeaddress_selector_modified  # added by Yousef # this should be seleceted dynmanically
   setup_jmeter
 fi
 
@@ -1784,6 +1840,7 @@ function main {
 
 	# invoke the creation of the metric array
 	create_metric_array
+  start_time_for_all_tasks=$(gdate +%s.%N)  #added by Yousef
 
 	# output the lavels to the results file
 	echo ${metricsLabels[@]} >> $metrics_verbose_filename.txt
@@ -1818,6 +1875,13 @@ function main {
 	mv $metrics_verbose_filename.txt results/ 2>/dev/null
 	mv $metrics_verbose_filename.csv results/ 2>/dev/null
 	rm results.txt 2>/dev/null
+
+  end_time_for_all_tasks=$(gdate +%s.%N)  #added by Yousef
+
+  Time_to_run_all_tasks=$( echo "$end_time_for_all_tasks - $start_time_for_all_tasks" | bc -l )
+  echo start_time=$start_time_for_all_tasks
+  echo end_time=$end_time_for_all_tasks
+  echo Time to complete all tasks=$Time_to_run_all_tasks sec
 }
 
 main
