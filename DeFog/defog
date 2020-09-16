@@ -30,11 +30,20 @@ edgeaddress1=$edgeaddress1
 edgeaddress2=$edgeaddress2
 edgeaddress3=$edgeaddress3
 edgeaddress4=$edgeaddress4
+edgeaddress5=$edgeaddress5
+edgeaddress6=$edgeaddress6
+edgeaddress7=$edgeaddress7
+edgeaddress8=$edgeaddress8
 
 edgeuser1=$edgeuser1
 edgeuser2=$edgeuser2
 edgeuser3=$edgeuser3
 edgeuser4=$edgeuser4
+edgeuser5=$edgeuser5
+edgeuser6=$edgeuser6
+edgeuser7=$edgeuser7
+edgeuser8=$edgeuser8
+
 
 awskey=$awskey
 cloudpublicip=$cloudpublicip
@@ -108,7 +117,7 @@ function random_selector {
 	then
 		while true; do
 
-			Range=4     #to limit the range of devices; Now we only run 3 edge devices; increase the number to be equal to the number of edge deivces you run
+			Range=8     #to limit the range of devices; Now we only run 3 edge devices; increase the number to be equal to the number of edge deivces you run
 			random_number=$RANDOM
 			let "random_number %= $Range"
 			echo ""
@@ -135,6 +144,22 @@ function random_selector {
 				edgeaddress=$edgeaddress4
 				edgeuser=$edgeuser4
 				break;;
+      '4')
+  			edgeaddress=$edgeaddress5
+  			edgeuser=$edgeuser5
+  			break;;
+      '5')
+    		edgeaddress=$edgeaddress6
+    		edgeuser=$edgeuser6
+    		break;;
+      '6')
+        edgeaddress=$edgeaddress7
+        edgeuser=$edgeuser7
+        break;;
+      '7')
+        edgeaddress=$edgeaddress8
+        edgeuser=$edgeuser8
+        break;;
 			*)
 				 echo "Wrong input, try again";;
 			esac
@@ -193,16 +218,25 @@ function nodes_loadavg {
   			cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
   			cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
         cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
+        cpu_usage5=$(ssh $edgeuser5@$edgeaddress5 cat /proc/loadavg | awk '{print $1}')
+        cpu_usage6=$(ssh $edgeuser6@$edgeaddress6 cat /proc/loadavg | awk '{print $1}')
+        cpu_usage7=$(ssh $edgeuser7@$edgeaddress7 cat /proc/loadavg | awk '{print $1}')
+        cpu_usage8=$(ssh $edgeuser8@$edgeaddress8 cat /proc/loadavg | awk '{print $1}')
         #cpu_usage5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/loadavg | awk '{print $1}')
 
         echo loadavarage of $edgeaddress1 is $cpu_usage1
         echo loadavarage of $edgeaddress2 is $cpu_usage2
         echo loadavarage of $edgeaddress3 is $cpu_usage3
         echo loadavarage of $edgeaddress4 is $cpu_usage4
+        echo loadavarage of $edgeaddress5 is $cpu_usage5
+        echo loadavarage of $edgeaddress6 is $cpu_usage6
+        echo loadavarage of $edgeaddress7 is $cpu_usage7
+        echo loadavarage of $edgeaddress8 is $cpu_usage8
         #echo loadavarage of $clouduser is $cpu_usage5
 
   			echo -e
-        declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4)
+        declare nodes_loadavarages=($cpu_usage1 $cpu_usage2 $cpu_usage3 $cpu_usage4 $cpu_usage5
+        $cpu_usage6 $cpu_usage7 $cpu_usage8)
         echo loadavarages of the avilable edge nodes =  ${nodes_loadavarages[*]}
   			echo -e
 
@@ -253,7 +287,22 @@ function nodes_loadavg {
            edgeaddress=$edgeaddress4
            edgeuser=$edgeuser4
            break;;
-
+        '4')
+           edgeaddress=$edgeaddress5
+           edgeuser=$edgeuser5
+           break;;
+        '5')
+           edgeaddress=$edgeaddress6
+           edgeuser=$edgeuser6
+           break;;
+        '6')
+           edgeaddress=$edgeaddress7
+           edgeuser=$edgeuser7
+           break;;
+        '7')
+           edgeaddress=$edgeaddress8
+           edgeuser=$edgeuser8
+           break;;
   			*)
   			   echo "Wrong input, try again";;
   		  esac
@@ -367,15 +416,26 @@ function nodes_memory {
       node3_mem=$(ssh $edgeuser3@$edgeaddress3 free --mega | grep Mem | awk '{print $4}')
       node4_mem=$(ssh $edgeuser4@$edgeaddress4 free --mega | grep Mem | awk '{print $4}')
 
+      node5_mem=$(ssh $edgeuser5@$edgeaddress5 free --mega | grep Mem | awk '{print $4}')
+      node6_mem=$(ssh $edgeuser6@$edgeaddress6 free --mega | grep Mem | awk '{print $4}')
+      node7_mem=$(ssh $edgeuser7@$edgeaddress7 free --mega | grep Mem | awk '{print $4}')
+      node8_mem=$(ssh $edgeuser8@$edgeaddress8 free --mega | grep Mem | awk '{print $4}')
+
       echo Free Memory of $edgeaddress1 is $node1_mem megabytes
       echo Free Memory of $edgeaddress2 is $node2_mem megabytes
       echo Free Memory of $edgeaddress3 is $node3_mem megabytes
       echo Free Memory of $edgeaddress4 is $node4_mem megabytes
 
+      echo Free Memory of $edgeaddress5 is $node5_mem megabytes
+      echo Free Memory of $edgeaddress6 is $node6_mem megabytes
+      echo Free Memory of $edgeaddress7 is $node7_mem megabytes
+      echo Free Memory of $edgeaddress8 is $node8_mem megabytes
+
   ################################################################################
   #comapare the RAM and select the deivce that has the max
      echo -e
-     declare nodes_mem=($node1_mem $node2_mem $node3_mem $node4_mem)
+     declare nodes_mem=($node1_mem $node2_mem $node3_mem $node4_mem
+     $node5_mem $node6_mem $node7_mem $node8_mem)
      echo Free Memory of the avilable edge nodes =  ${nodes_mem[*]}
      echo -e
 
@@ -425,6 +485,22 @@ function nodes_memory {
   '3')
      edgeaddress=$edgeaddress4
      edgeuser=$edgeuser4
+     break;;
+  '4')
+     edgeaddress=$edgeaddress5
+     edgeuser=$edgeuser5
+     break;;
+  '5')
+     edgeaddress=$edgeaddress6
+     edgeuser=$edgeuser6
+     break;;
+  '6')
+     edgeaddress=$edgeaddress7
+     edgeuser=$edgeuser7
+     break;;
+  '7')
+     edgeaddress=$edgeaddress8
+     edgeuser=$edgeuser8
      break;;
   *)
      echo "Wrong input, try again";;
@@ -595,12 +671,16 @@ function manual_selector {
 		while true; do
 			echo ""
 			echo -e "Please select edge node device:"
-				echo "To choose Raspberry Pi 1, Enter 1"
-				echo "To choose Raspberry Pi 2, Enter 2"
-				echo "To choose Raspberry Pi 3, Enter 3"
-        echo "To choose Raspberry Pi 4, Enter 4"
+				echo "To choose Raspberry Pi 224, Enter 1"
+				echo "To choose Raspberry Pi 168, Enter 2"
+				echo "To choose Raspberry Pi 182, Enter 3"
+        echo "To choose Raspberry Pi 131, Enter 4"
+        echo "To choose Raspberry Pi 222, Enter 5"
+        echo "To choose Raspberry Pi 229, Enter 6"
+        echo "To choose Raspberry Pi 148, Enter 7"
+        echo "To choose Raspberry Pi 230, Enter 8"
 				echo ""
-		  read -p "What device would you like to run:[1,2,3,4] " ANS
+		  read -p "What device would you like to run: [1-8]" ANS
 		  case $ANS in
 			'1')
 			   edgeaddress=$edgeaddress1
@@ -618,6 +698,22 @@ function manual_selector {
    			edgeaddress=$edgeaddress4
    			edgeuser=$edgeuser4
    			break;;
+      '5')
+        edgeaddress=$edgeaddress5
+        edgeuser=$edgeuser5
+        break;;
+      '6')
+        edgeaddress=$edgeaddress6
+        edgeuser=$edgeuser6
+        break;;
+      '7')
+        edgeaddress=$edgeaddress7
+        edgeuser=$edgeuser7
+        break;;
+      '8')
+        edgeaddress=$edgeaddress8
+        edgeuser=$edgeuser8
+        break;;
 			*)
 			   echo "Wrong input, try again";;
 		  esac
@@ -1180,8 +1276,13 @@ function benchmark_cloud_applications {
     scp_asset
     echo -e "DONE - transferring asset payload to destination"
 
+    if [ "$applications" == "-y" ]; then containerName="darknet$1";    #added by Yousef
+  elif [ "$applications" == "-p" ]; then containerName="psphinx$1";  #added by Yousef
+elif [ "$applications" == "-j" ]; then containerName="aeneas$1";  #added by Yousef
+    fi
+
 		echo -e "ssh into cloud instance for application benchmarks.."
-		ssh -i $awskey $clouduser@$cloudaddress ' sudo bash -s' -- < ./applications $environment $actions $applications
+		ssh -i $awskey $clouduser@$cloudaddress ' sudo bash -s' -- < ./applications $environment $actions $applications $containerName
 		echo -e "DONE - cloud ssh session"
 		echo -e
 
@@ -1195,13 +1296,13 @@ function benchmark_cloud_applications {
 		metricsValues[8]=${newarr1[1]}
 		metricsValues[11]=$(bc <<< "scale=10;${metricsValues[8]}/${metricsValues[3]}")
 
-		rm returnedasset.* 2>/dev/null
+		#rm returnedasset.* 2>/dev/null
 
 		cat cloudresult.txt >> $verbose_filename.txt 2>/dev/null
-		rm cloudresult.txt 2>/dev/null
+		#rm cloudresult.txt 2>/dev/null
 
 		read -a newarr < arrresult.txt
-		rm arrresult.txt 2>/dev/null
+		#rm arrresult.txt 2>/dev/null
 
 		echo -e Total bytes transferred from the cloud: ${metricsValues[8]} bytes | tee -a $verbose_filename.txt
 		echo Transfer cloud application results to edge device: completed in $runtime secs | tee -a $verbose_filename.txt
@@ -1433,7 +1534,7 @@ function benchmark_application {
 		echo -e
 		if [ "$environment" == "-c" ]; # cloud only
 		then
-			benchmark_cloud_applications
+			benchmark_cloud_applications $1
 			calc_rtt
 			if [ "${metricsValues[5]}" != "NA" ];
 			then
@@ -1513,12 +1614,17 @@ function benchmark_fog_app {
     # select edge node based on different resource allocations
     #manual_selector                              # to select edge node manually
     #random_selector                              # to select edge node randomly
-    nodes_loadavg                                # to select edge node min loadavg
-    #nodes_latency                                # to select edge node min latecny
+    #nodes_loadavg                                # to select edge node min loadavg
     #nodes_memory                                 # to select edge node max memory
+    #nodes_latency                                # to select edge node min latecny
     #nodes_specification
-    #decision-making                             # to select edge node based on OR-function
+    decision-making                             # to select edge node based on OR-function
 
+    #edgeaddress=192.168.1.131
+    #edgeuser=pi
+
+    #cloudaddress=$cloudaddress
+    #clouduser=$clouduser
 
     if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
     elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
@@ -1542,7 +1648,7 @@ function benchmark_fog_app {
 
     benchmark_application $count &     # & to fork muiltple processes, $count to pass image number as a parameter
     #if (($count%num_files==0));
-    if (($count%32==0));
+    if (($count%2==0));
     then
     wait
     fi
@@ -1571,8 +1677,6 @@ function benchmark_aeneas {
   metricsValues[17]=$pipeline
   metricsValues[18]=$application_name
   metricsValues[20]=$newassetname
-
-
 
   #benchmark_edge_actions
   #transfer_config "1"
@@ -1604,18 +1708,20 @@ function benchmark_aeneas {
     # select edge node based on different functions
     #manual_selector                              # to select edge node manually
     #random_selector                               # to select edge node randomly
-    nodes_loadavg                                # to select edge node min loadavg
+    #nodes_loadavg                                # to select edge node min loadavg
     #nodes_latency                                # to select edge node min latecny
     #nodes_memory                                 # to select edge node max memory
     #nodes_specification
-    #decision-making                             # to select edge node based on decision-making function
+    decision-making                             # to select edge node based on decision-making function
 
     #edgeaddress=$edgeaddress1  #some function to retun Ip address of the device
     #edgeuser=$edgeuser1
 
 		metricsValues[17]=$pipeline
 		metricsValues[18]="Aeneas"
-		metricsValues[19]=$edgeaddress #added by Yousef to read ip address of the edge device
+    if [ "$environment" == "-c" ]; then metricsValues[19]=$cloudaddress; #added by Yousef
+    elif [ "$environment" == "-e" ]; then metricsValues[19]=$edgeaddress;  #added by Yousef
+    fi
     metricsValues[20]="aeneas$count"
 
 		echo -e "" | tee -a $verbose_filename.txt
@@ -1758,13 +1864,21 @@ function seperator {
 ################################################################################
 ################################################################################
 
+#The appalication start here:
+
 # to remove old results and assets
 ssh pi@192.168.1.224 sudo bash /home/pi/defog/setup.sh
 ssh pi@192.168.1.168 sudo bash /home/pi/defog/setup.sh
 ssh pi@192.168.1.182 sudo bash /home/pi/defog/setup.sh
 ssh pi@192.168.1.131 sudo bash /home/pi/defog/setup.sh
 
-#The appalication start here:
+ssh pi@192.168.1.222 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.229 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.230 sudo bash /home/pi/defog/setup.sh
+ssh pi@192.168.1.148 sudo bash /home/pi/defog/setup.sh
+
+#ssh -i "/Users/Yousef/Documents/configs/EC2.pem" ubuntu@ec2-3-87-222-15.compute-1.amazonaws.com sudo bash /home/ubuntu/defog/setup.sh
+
 create_result_files
 #profiling_nodes
 #display_ascii_header
@@ -1773,6 +1887,8 @@ applications_user_input  # choose application first then choose the deployment e
 env_user_input
 if [ "$environment" == "-c" ]; # cloud only
 then
+  # to remove old results and assets
+  ssh -i "/Users/Yousef/Documents/configs/EC2.pem" ubuntu@ec2-3-87-222-15.compute-1.amazonaws.com sudo bash /home/ubuntu/defog/setup.sh
   echo ""
   echo -e "Cloud Only Benchmarks: " | tee -a $verbose_filename.txt
   seperator
@@ -1840,7 +1956,7 @@ function main {
 
 	# invoke the creation of the metric array
 	create_metric_array
-  start_time_for_all_tasks=$(gdate +%s.%N)  #added by Yousef
+  start_time_for_all_tasks=$(gdate +%s.%N)  #added by Yousef. This to start compute processing time of all tasks over all nodes
 
 	# output the lavels to the results file
 	echo ${metricsLabels[@]} >> $metrics_verbose_filename.txt
@@ -1848,8 +1964,8 @@ function main {
 	# handle the pipeline specific actions/application benchmarks
 	if [ "$environment" == "-c" ]; # cloud only
 	then
-		benchmark_cloud_actions
-		transfer_config "0"
+		#benchmark_cloud_actions
+		#transfer_config "0"
 		benchmark_applications
 	fi
 

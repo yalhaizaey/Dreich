@@ -1,5 +1,0 @@
-Computation: completed in 42.670925822 secs
-Computation: completed in 40.391390128 secs
-Computation: completed in 40.455856763 secs
-Computation: completed in 37.204839687 secs
-Computation: completed in 38.830108943 secs
