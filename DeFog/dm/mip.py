@@ -1,107 +1,118 @@
-from __future__ import print_function
+# Retrun results for bash format
+# No task sizes here or task requirnments. Which means every task has the same requirnments!
+# Second Version: This Python code makes calculation based on the cost matrix itself. No task_sizes/requirnment here!
+# Omit (task_sizes); calculation made based on cost matrix! Normal assingment problem without considereing task_requirnments!
+# node capacities = number of tasks (how many tasks) each node can handle concurrently (e.g Pi can handle 20 tasks image processing)
+
+# objective is to minimise the total cost!
+# cost matrix shows that cost on node 0 incure high computations while on node 3 incure less computations
+
+import random
 import time
 from ortools.linear_solver import pywraplp
-import os
 
 def main():
-  solver = pywraplp.Solver('SolveAssignmentProblem',
-                           pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+    #-------------------------------------------
+    #randomize code created by Jeremy;
 
-  start = time.time()
+    # example array of task costs on different nodes (30 tasks)
+    x = [
+      [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50],
+      [40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40],
+      [40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40],
+      [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],
+      ]
 
-  edge_devices = ['192.168.1.224', '192.168.1.168', '192.168.1.182', '192.168.1.131',
-  '192.168.1.222', '192.168.1.229', '192.168.1.148', '192.168.1.230']
+    # pseudo-random seed init
+    # (for repeatability of random sequence)
+    #random.seed(42)
 
-  new_edge_devices = []
-  e_devices='('
+    # thresholds for changing costs
+    MIN_COST_MULTIPLIER=0.5
+    MAX_COST_MULTIPLIER=2.0
 
-#?? how to populate the cost matrix correctly based ?
-# procssing speed of each device
-# e.g Pi 4 processing speed = 0.00001s per pixel, task size = hd image 1280*720=921600pixels
-# estimating time = 921600 * 0.00001s= 9.216 seconds
-# cost matrix for image-detection benchmark
-  cost = [
-         [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],    #pi2 - 224
-         [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],    #pi3B - 168
-         [35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35],    #pi3B+ - 182
-         [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],    #pi4 - 131
+    for i in range(len(x)):
+        for j in range(len(x[i])):
+            x[i][j] = random.randint(int(x[i][j]*MIN_COST_MULTIPLIER), int(x[i][j]*MAX_COST_MULTIPLIER))
 
-         [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],    #pi2 - 222
-         [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],    #pi2 - 229
-         [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],    #pi3B - 148
-         [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],    #pi3B - 230
-         ]
+  #-------------------------------------------
+    #begin Google-or Tool;
+    # Data
+    costs = x
+    num_workers = len(costs)
+    num_tasks = len(costs[0])
 
-  # task_sizes = [10, 7, 3, 12]
+    # how many tasks each node can process concurrently! (e.g. Pi2 can handle up to 3 tasks; Pi3B up to 4;)
+    # For example (if task is image processing; Pi2 can handle up to 3)
+    node_cap = [3,5,7,15]
 
-  #?? how to define/calculate the cost of the task_sizes???
-  #??  task_sizes = CPU or Mem?  maximum for each cpu to give results in resonable time?
-  task_sizes = [10, 7, 3, 12, 15, 4, 11, 5, 10, 15, 13, 7, 10, 7, 3, 12, 15, 4, 11, 5, 10, 15, 13, 7, 10, 7, 3, 12, 15, 4, 11, 5]
-  #task_sizes = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+    # Solver
+    # Create the mip solver with the SCIP backend.
+    #solver = pywraplp.Solver.CreateSolver('MIP')
 
+    solver = pywraplp.Solver('SolveAssignmentProblem',
+                             pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
-  # Maximum total of task sizes for any worker
-  # the maximum task size each worker can do
-  # e.g total_size_max=20...worker 1=10+9=19<20 can do both tasks
-  # if tasks size total > 20 can't do both tasks
+    start = time.time()
+    edge_devices = ['192.168.1.224', '192.168.1.168', '192.168.1.182', '192.168.1.131']
+    new_edge_devices = []
+    e_devices='('
 
-  total_size_max = 80          # increase/decrease the value of this variable! #threshold
-  #total_size_max = 135          # increase/decrease the value of this variable! #threshold for Pocket app
-  num_workers = len(cost)
-  num_tasks = len(cost[1])
+    # Variables
+    # x[i, j] is an array of 0-1 variables, which will be 1
+    # if worker i is assigned to task j.
+    x = {}
+    for i in range(num_workers):
+        for j in range(num_tasks):
+            x[i, j] = solver.IntVar(0, 1, '')
 
-  # Variables
-  x = {}
+    # Constraints
+    # Number of tasks assinged to each node less than the node capacitiy!
+    for i in range(num_workers):
+        solver.Add(solver.Sum([x[i, j] for j in range(num_tasks)]) <= node_cap[i])
 
-  for i in range(num_workers):
+    # Each task is assigned to exactly one worker.
     for j in range(num_tasks):
-      x[i, j] = solver.IntVar(0, 1, 'x[%i,%i]' % (i, j))
+        solver.Add(solver.Sum([x[i, j] for i in range(num_workers)]) == 1)
 
-  # Constraints
-  # The total size of the tasks each worker takes on is at most total_size_max.
+    # Objective
+    objective_terms = []
+    for i in range(num_workers):
+        for j in range(num_tasks):
+            objective_terms.append(costs[i][j] * x[i, j])
 
-  for i in range(num_workers):
-    solver.Add(solver.Sum([task_sizes[j] * x[i, j] for j in range(num_tasks)]) <= total_size_max)
+    solver.Minimize(solver.Sum(objective_terms))
 
-  # Each task is assigned to at least one worker.
+    # Solve
+    status = solver.Solve()
+    #print('Minimum cost = ', solver.Objective().Value())
 
-  for j in range(num_tasks):
-    solver.Add(solver.Sum([x[i, j] for i in range(num_workers)]) >= 1)
+    #print()
+    final_Workers_IP=[0]*len(costs[1])
+    #print()
 
-  solver.Minimize(solver.Sum([cost[i][j] * x[i,j] for i in range(num_workers)
-                                                  for j in range(num_tasks)]))
-  sol = solver.Solve()
-
-  #print('Minimum cost = ', solver.Objective().Value())
-  #print()
-  final_Workers_IP=[0]*len(cost[1])
-  for i in range(num_workers):
-    for j in range(num_tasks):
-      if x[i, j].solution_value() > 0:
-        #print (i)
-        #assign workers to array based on the task they were assigned
-        #final_Workers_IP[j]=edge_devices[i] +' task ',j
-        final_Workers_IP[j]='\''+edge_devices [i]+'\' '
-
-        #string
-        e_devices+='\''+edge_devices [i]+'\' '
-        #return (edge_devices [i])
-        #print('Edge node', i,' assigned to task', j, '  Cost = ', cost[i][j])
-        #print ('')
-  #print()
-  end = time.time()
-  #print("Time = ", round(end - start, 4), "seconds")
-  #print (new_edge_devices)
-  e_devices = e_devices[:-1]
-  e_devices+=')'
-  #print(e_devices)
-  finalIPsBashFormat='('
-  for i in range(num_tasks):
-      finalIPsBashFormat+=final_Workers_IP[i]
-  finalIPsBashFormat= finalIPsBashFormat[:-1]
-  finalIPsBashFormat+=')'
-
-  print(finalIPsBashFormat)
-
+    # Print solution.
+    if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+        #print('Total cost = ', solver.Objective().Value(), '\n')
+        for i in range(num_workers):
+            for j in range(num_tasks):
+                # Test if x[i,j] is 1 (with tolerance for floating point arithmetic).
+                if x[i, j].solution_value() > 0.5:
+                    final_Workers_IP[j]='\''+edge_devices [i]+'\' '
+                    e_devices+='\''+edge_devices [i]+'\' '
+                    #print('Edge node %d assigned to task %d.  Cost = %d' % (i, j, costs[i][j]))
+        #print()
+        end = time.time()
+        #print("Time = ", round(end - start, 4), "seconds")
+        #print (new_edge_devices)
+        e_devices = e_devices[:-1]
+        e_devices+=')'
+        finalIPsBashFormat='('
+        for i in range(num_tasks):
+            finalIPsBashFormat+=final_Workers_IP[i]
+        finalIPsBashFormat= finalIPsBashFormat[:-1]
+        finalIPsBashFormat+=')'
+        #print ()
+        print(finalIPsBashFormat)
 if __name__ == '__main__':
-  main()
+    main()

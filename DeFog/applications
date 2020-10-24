@@ -171,9 +171,9 @@ function main {
 
 # accept user input passed by defog bash script
 #while getopts :cebz:adfsxulhngs:yipjmk: opt; do # orignial code
-#while getopts :cebz:adfsxulhngs:ipjmky: opt; do # when application is Yolo
+while getopts :cebz:adfsxulhngs:ipjmky: opt; do # when application is Yolo
 #while getopts :cebz:adfsxulhngs:ijmkyp: opt; do  # when application is PocketSphinx
-while getopts :cebz:adfsxulhngs:imkypj: opt; do  # when application is aeneas
+#while getopts :cebz:adfsxulhngs:imkypj: opt; do  # when application is aeneas
 
 #while getopts $value opt; do
 

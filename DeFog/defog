@@ -30,19 +30,19 @@ edgeaddress1=$edgeaddress1
 edgeaddress2=$edgeaddress2
 edgeaddress3=$edgeaddress3
 edgeaddress4=$edgeaddress4
-edgeaddress5=$edgeaddress5
-edgeaddress6=$edgeaddress6
-edgeaddress7=$edgeaddress7
-edgeaddress8=$edgeaddress8
+#edgeaddress5=$edgeaddress5
+#edgeaddress6=$edgeaddress6
+#edgeaddress7=$edgeaddress7
+#edgeaddress8=$edgeaddress8
 
 edgeuser1=$edgeuser1
 edgeuser2=$edgeuser2
 edgeuser3=$edgeuser3
 edgeuser4=$edgeuser4
-edgeuser5=$edgeuser5
-edgeuser6=$edgeuser6
-edgeuser7=$edgeuser7
-edgeuser8=$edgeuser8
+#edgeuser5=$edgeuser5
+#edgeuser6=$edgeuser6
+#edgeuser7=$edgeuser7
+#edgeuser8=$edgeuser8
 
 
 awskey=$awskey
@@ -218,20 +218,20 @@ function nodes_loadavg {
   			cpu_usage2=$(ssh $edgeuser2@$edgeaddress2 cat /proc/loadavg | awk '{print $1}')
   			cpu_usage3=$(ssh $edgeuser3@$edgeaddress3 cat /proc/loadavg | awk '{print $1}')
         cpu_usage4=$(ssh $edgeuser4@$edgeaddress4 cat /proc/loadavg | awk '{print $1}')
-        cpu_usage5=$(ssh $edgeuser5@$edgeaddress5 cat /proc/loadavg | awk '{print $1}')
-        cpu_usage6=$(ssh $edgeuser6@$edgeaddress6 cat /proc/loadavg | awk '{print $1}')
-        cpu_usage7=$(ssh $edgeuser7@$edgeaddress7 cat /proc/loadavg | awk '{print $1}')
-        cpu_usage8=$(ssh $edgeuser8@$edgeaddress8 cat /proc/loadavg | awk '{print $1}')
+        #cpu_usage5=$(ssh $edgeuser5@$edgeaddress5 cat /proc/loadavg | awk '{print $1}')
+        #cpu_usage6=$(ssh $edgeuser6@$edgeaddress6 cat /proc/loadavg | awk '{print $1}')
+        #cpu_usage7=$(ssh $edgeuser7@$edgeaddress7 cat /proc/loadavg | awk '{print $1}')
+        #cpu_usage8=$(ssh $edgeuser8@$edgeaddress8 cat /proc/loadavg | awk '{print $1}')
         #cpu_usage5=$(ssh -i "myEC2.pem" $clouduser@$cloudaddress cat /proc/loadavg | awk '{print $1}')
 
         echo loadavarage of $edgeaddress1 is $cpu_usage1
         echo loadavarage of $edgeaddress2 is $cpu_usage2
         echo loadavarage of $edgeaddress3 is $cpu_usage3
         echo loadavarage of $edgeaddress4 is $cpu_usage4
-        echo loadavarage of $edgeaddress5 is $cpu_usage5
-        echo loadavarage of $edgeaddress6 is $cpu_usage6
-        echo loadavarage of $edgeaddress7 is $cpu_usage7
-        echo loadavarage of $edgeaddress8 is $cpu_usage8
+        #echo loadavarage of $edgeaddress5 is $cpu_usage5
+        #echo loadavarage of $edgeaddress6 is $cpu_usage6
+        #echo loadavarage of $edgeaddress7 is $cpu_usage7
+        #echo loadavarage of $edgeaddress8 is $cpu_usage8
         #echo loadavarage of $clouduser is $cpu_usage5
 
   			echo -e
@@ -1614,7 +1614,7 @@ function benchmark_fog_app {
     # select edge node based on different resource allocations
     #manual_selector                              # to select edge node manually
     #random_selector                              # to select edge node randomly
-    #nodes_loadavg                                # to select edge node min loadavg
+    #nodes_loadavg                                 # to select edge node min loadavg
     #nodes_memory                                 # to select edge node max memory
     #nodes_latency                                # to select edge node min latecny
     #nodes_specification
@@ -1648,7 +1648,7 @@ function benchmark_fog_app {
 
     benchmark_application $count &     # & to fork muiltple processes, $count to pass image number as a parameter
     #if (($count%num_files==0));
-    if (($count%2==0));
+    if (($count%30==0));
     then
     wait
     fi
@@ -1771,7 +1771,7 @@ function benchmark_aeneas {
 
     benchmark_application $count &     # & to fork muiltple processes, $count to pass image number as a parameter
     #if (($count%num_files==0));
-    if (($count%32==0));
+    if (($count%30==0));
     then
     wait
     fi
