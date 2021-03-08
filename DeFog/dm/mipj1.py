@@ -1,12 +1,6 @@
-# Retrun results for bash format
-# No task sizes here or task requirnments. Which means every task has the same requirnments!
-# Second Version: This Python code makes calculation based on the cost matrix itself. No task_sizes/requirnment here!
-# Omit (task_sizes); calculation made based on cost matrix! Normal assingment problem without considereing task_requirnments!
-# node capacities = number of tasks (how many tasks) each node can handle concurrently (e.g Pi can handle 20 tasks image processing)
 
-# objective is to minimise the total cost!
-# cost matrix shows that cost on node 0 incure high computations while on node 3 incure less computations
-
+from numpy.random import normal
+from numpy import rint
 import random
 import time
 from ortools.linear_solver import pywraplp
@@ -14,26 +8,39 @@ from ortools.linear_solver import pywraplp
 def main():
     #-------------------------------------------
     #randomize code created by Jeremy;
+    def prMatrix(x):
+        for row in x:
+            for val in row:
+                print(val,end=',')
+            print()
+        print()
+    # example array of task costs on different nodes
+    n=32 #number of tasks to be allocated
 
-    # example array of task costs on different nodes (30 tasks)
-    x = [
-      [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50],
-      [40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40],
-      [40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40],
-      [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],
-      ]
+    x = [ [50]*n, [40]*n, [40]*n, [10]*n] #8 nodes
 
-    # pseudo-random seed init
-    # (for repeatability of random sequence)
-    #random.seed(42)
+    print (x)
+    print('initial x:')
+    print('----------')
+    prMatrix(x)
 
+
+    ####### @jsinger new perturbation code for cost matrix
     # thresholds for changing costs
-    MIN_COST_MULTIPLIER=0.5
-    MAX_COST_MULTIPLIER=2.0
-
+    COEFFICIENT_OF_VARIATION=0.5  # c.o.v. = stdev / mean = sigma/mu
+    # try different values - between 0 and 1?
     for i in range(len(x)):
         for j in range(len(x[i])):
-            x[i][j] = random.randint(int(x[i][j]*MIN_COST_MULTIPLIER), int(x[i][j]*MAX_COST_MULTIPLIER))
+            mu = x[i][j]
+            sigma = COEFFICIENT_OF_VARIATION * mu
+            updated_value = int(rint(normal(mu, sigma)))
+            x[i][j] = max(0, updated_value)  # no negative costs!
+
+    ##########
+
+    print('final x:')
+    print('----------')
+    prMatrix(x)
 
   #-------------------------------------------
     #begin Google-or Tool;
@@ -42,9 +49,10 @@ def main():
     num_workers = len(costs)
     num_tasks = len(costs[0])
 
-    # how many tasks each node can process concurrently! (e.g. Pi2 can handle up to 3 tasks; Pi3B up to 4;)
-    # For example (if task is image processing; Pi2 can handle up to 3)
-    node_cap = [3,5,7,15]
+    node_cap = [(n*0.15),(n*0.2),(n*0.2),(n*0.5)]
+
+
+    print (node_cap)
 
     # Solver
     # Create the mip solver with the SCIP backend.
@@ -54,7 +62,7 @@ def main():
                              pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
     start = time.time()
-    edge_devices = ['192.168.1.224', '192.168.1.168', '192.168.1.182', '192.168.1.131']
+    edge_devices = ['192.168.1.222', '192.168.1.168', '192.168.1.182', '192.168.1.131']
     new_edge_devices = []
     e_devices='('
 
@@ -85,7 +93,7 @@ def main():
 
     # Solve
     status = solver.Solve()
-    #print('Minimum cost = ', solver.Objective().Value())
+    print('Minimum cost = ', solver.Objective().Value())
 
     #print()
     final_Workers_IP=[0]*len(costs[1])
@@ -100,10 +108,10 @@ def main():
                 if x[i, j].solution_value() > 0.5:
                     final_Workers_IP[j]='\''+edge_devices [i]+'\' '
                     e_devices+='\''+edge_devices [i]+'\' '
-                    #print('Edge node %d assigned to task %d.  Cost = %d' % (i, j, costs[i][j]))
-        #print()
+                    print('Edge node %d assigned to task %d.  Cost = %d' % (i, j, costs[i][j]))
+        print()
         end = time.time()
-        #print("Time = ", round(end - start, 4), "seconds")
+        print("Time = ", round(end - start, 4), "seconds")
         #print (new_edge_devices)
         e_devices = e_devices[:-1]
         e_devices+=')'
@@ -112,7 +120,7 @@ def main():
             finalIPsBashFormat+=final_Workers_IP[i]
         finalIPsBashFormat= finalIPsBashFormat[:-1]
         finalIPsBashFormat+=')'
-        #print ()
+        print ()
         print(finalIPsBashFormat)
 if __name__ == '__main__':
     main()
